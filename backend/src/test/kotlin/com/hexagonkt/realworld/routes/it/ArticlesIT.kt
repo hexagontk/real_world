@@ -1,13 +1,14 @@
 package com.hexagonkt.realworld.routes.it
 
-import com.hexagonkt.http.client.Client
-import com.hexagonkt.http.client.ClientSettings
-import com.hexagonkt.http.client.ahc.AhcAdapter
+import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.http.client.HttpClient
+import com.hexagonkt.http.client.HttpClientSettings
+import com.hexagonkt.http.client.jetty.JettyClientAdapter
+import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.messages.PutArticleRequest
 import com.hexagonkt.realworld.server
-import com.hexagonkt.serialization.Json
 import com.hexagonkt.realworld.services.Article
 import com.hexagonkt.realworld.services.User
 import org.junit.jupiter.api.AfterAll
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import java.net.URL
 
+// TODO Add test to check articles' tags order
 @TestInstance(PER_CLASS)
 class ArticlesIT {
 
@@ -41,7 +43,7 @@ class ArticlesIT {
         slug = "how-to-train-your-dragon",
         description = "Ever wonder how?",
         body = "Very carefully.",
-        tagList = setOf("dragons","training"),
+        tagList = linkedSetOf("dragons", "training"),
         author = jake.username
     )
 
@@ -50,11 +52,13 @@ class ArticlesIT {
         slug = "never-ending-story",
         description = "Fantasia is dying",
         body = "Fight for Fantasia!",
-        tagList = setOf("dragons", "books"),
+        tagList = linkedSetOf("dragons", "books"),
         author = jake.username
     )
 
     @BeforeAll fun startup() {
+        System.setProperty("mongodbUrl", mongodbUrl)
+
         main()
     }
 
@@ -63,9 +67,9 @@ class ArticlesIT {
     }
 
     @Test fun `Delete, create update and get an article`() {
-        val endpoint = "http://localhost:${server.runtimePort}/api"
-        val settings = ClientSettings(Json.contentType)
-        val client = RealWorldClient(Client(AhcAdapter(), endpoint, settings))
+        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
 
         val jakeClient = client.initializeUser(jake)
 
@@ -77,9 +81,9 @@ class ArticlesIT {
     }
 
     @Test fun `Favorite and un-favorite articles`() {
-        val endpoint = "http://localhost:${server.runtimePort}/api"
-        val settings = ClientSettings(Json.contentType)
-        val client = RealWorldClient(Client(AhcAdapter(), endpoint, settings))
+        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
         val user = jake.username
 
         val jakeClient = client.initializeUser(jake)
@@ -106,9 +110,9 @@ class ArticlesIT {
     }
 
     @Test fun `Find articles filters correctly`() {
-        val endpoint = "http://localhost:${server.runtimePort}/api"
-        val settings = ClientSettings(Json.contentType)
-        val client = RealWorldClient(Client(AhcAdapter(), endpoint, settings))
+        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
 
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)
@@ -144,9 +148,9 @@ class ArticlesIT {
     }
 
     @Test fun `Get user feed`() {
-        val endpoint = "http://localhost:${server.runtimePort}/api"
-        val settings = ClientSettings(Json.contentType)
-        val client = RealWorldClient(Client(AhcAdapter(), endpoint, settings))
+        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
 
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)

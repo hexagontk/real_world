@@ -1,8 +1,6 @@
 package com.hexagonkt.realworld.messages
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
-import com.hexagonkt.realworld.toIso8601
+import com.hexagonkt.core.*
 import com.hexagonkt.realworld.services.Article
 import com.hexagonkt.realworld.services.User
 
@@ -11,17 +9,28 @@ data class ArticleRequest(
     val description: String,
     val body: String,
     val tagList: Set<String>
-)
+) {
+    constructor(data: Map<*, *>) : this(
+        data.requireString(ArticleRequest::title),
+        data.requireString(ArticleRequest::description),
+        data.requireString(ArticleRequest::body),
+        data.getStringsOrEmpty(ArticleRequest::tagList).toSortedSet(),
+    )
+}
 
-data class ArticleRequestRoot(val article: ArticleRequest)
-
-@JsonInclude(NON_NULL)
 data class AuthorResponse(
     val username: String,
     val bio: String,
     val image: String,
     val following: Boolean
-)
+) {
+    constructor(data: Map<*, *>) : this(
+        username = data.requireString(AuthorResponse::username),
+        bio = data.requireString(AuthorResponse::bio),
+        image = data.requireString(AuthorResponse::image),
+        following = data.requireBoolean(AuthorResponse::following),
+    )
+}
 
 data class ArticleCreationResponse(
     val slug: String,
@@ -34,7 +43,20 @@ data class ArticleCreationResponse(
     val favorited: Boolean,
     val favoritesCount: Int,
     val author: String
-)
+) {
+    constructor(data: Map<*, *>) : this(
+        slug = data.requireString(ArticleCreationResponse::slug),
+        title = data.requireString(ArticleCreationResponse::title),
+        description = data.requireString(ArticleCreationResponse::description),
+        body = data.requireString(ArticleCreationResponse::body),
+        tagList = data.getStringsOrEmpty(ArticleCreationResponse::tagList).toSortedSet(),
+        createdAt = data.requireString(ArticleCreationResponse::createdAt),
+        updatedAt = data.requireString(ArticleCreationResponse::updatedAt),
+        favorited = data.requireBoolean(ArticleCreationResponse::favorited),
+        favoritesCount = data.requireInt(ArticleCreationResponse::favoritesCount),
+        author = data.requireString(ArticleCreationResponse::author),
+    )
+}
 
 data class ArticleCreationResponseRoot(val article: ArticleCreationResponse) {
     constructor(article: Article, subject: String) : this(
@@ -44,8 +66,8 @@ data class ArticleCreationResponseRoot(val article: ArticleCreationResponse) {
             description = article.description,
             body = article.body,
             tagList = article.tagList,
-            createdAt = article.createdAt.toIso8601(),
-            updatedAt = article.updatedAt.toIso8601(),
+            createdAt = article.createdAt.toUtc(),
+            updatedAt = article.updatedAt.toUtc(),
             favorited = false,
             favoritesCount = 0,
             author = subject
@@ -58,9 +80,22 @@ data class PutArticleRequest(
     val description: String? = null,
     val body: String? = null,
     val tagList: Set<String> = emptySet()
-)
+) {
+    constructor(data: Map<*, *>) : this(
+        data.getString(PutArticleRequest::title),
+        data.getString(PutArticleRequest::description),
+        data.getString(PutArticleRequest::body),
+        data.getStringsOrEmpty(PutArticleRequest::tagList).toSortedSet(),
+    )
 
-data class PutArticleRequestRoot(val article: PutArticleRequest)
+    fun toFieldsMap(): Map<String, *> =
+        fieldsMapOf(
+            PutArticleRequest::title to title,
+            PutArticleRequest::description to description,
+            PutArticleRequest::body to body,
+            PutArticleRequest::tagList to tagList,
+        )
+}
 
 data class ArticleResponse(
     val slug: String,
@@ -73,7 +108,20 @@ data class ArticleResponse(
     val favorited: Boolean,
     val favoritesCount: Int,
     val author: AuthorResponse
-)
+) {
+    constructor(data: Map<*, *>) : this(
+        slug = data.requireString(ArticleCreationResponse::slug),
+        title = data.requireString(ArticleCreationResponse::title),
+        description = data.requireString(ArticleCreationResponse::description),
+        body = data.requireString(ArticleCreationResponse::body),
+        tagList = data.getStringsOrEmpty(ArticleCreationResponse::tagList).toSortedSet(),
+        createdAt = data.requireString(ArticleCreationResponse::createdAt),
+        updatedAt = data.requireString(ArticleCreationResponse::updatedAt),
+        favorited = data.requireBoolean(ArticleCreationResponse::favorited),
+        favoritesCount = data.requireInt(ArticleCreationResponse::favoritesCount),
+        author = data.requireMap(ArticleCreationResponse::author).let(::AuthorResponse),
+    )
+}
 
 data class ArticleResponseRoot(val article: ArticleResponse) {
     constructor(article: Article, author: User, user: User?) : this(
@@ -83,8 +131,8 @@ data class ArticleResponseRoot(val article: ArticleResponse) {
             description = article.description,
             body = article.body,
             tagList = article.tagList,
-            createdAt = article.createdAt.toIso8601(),
-            updatedAt = article.updatedAt.toIso8601(),
+            createdAt = article.createdAt.toUtc(),
+            updatedAt = article.updatedAt.toUtc(),
             favorited = article.favoritedBy.contains(user?.username),
             favoritesCount = article.favoritedBy.size,
             author = AuthorResponse(
@@ -97,7 +145,6 @@ data class ArticleResponseRoot(val article: ArticleResponse) {
     )
 }
 
-@JsonInclude(NON_NULL)
 data class ArticlesResponseRoot(
     val articles: List<ArticleResponse>,
     val articlesCount: Long

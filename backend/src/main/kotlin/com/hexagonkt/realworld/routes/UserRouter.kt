@@ -1,44 +1,45 @@
 package com.hexagonkt.realworld.routes
 
-import com.hexagonkt.http.server.Call
-import com.hexagonkt.http.server.Router
-import com.hexagonkt.realworld.injector
-import com.hexagonkt.realworld.messages.PutUserRequestRoot
+import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.requireKeys
+import com.hexagonkt.http.server.handlers.HttpServerContext
+import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.realworld.jwt
+import com.hexagonkt.realworld.messages.PutUserRequest
 import com.hexagonkt.realworld.messages.UserResponseRoot
-import com.hexagonkt.realworld.rest.Jwt
+import com.hexagonkt.realworld.Jwt
+import com.hexagonkt.rest.bodyMap
 import com.hexagonkt.realworld.services.User
-import com.hexagonkt.serialization.convertToMap
+import com.hexagonkt.realworld.users
+import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store
 
-import kotlin.text.Charsets.UTF_8
-
-internal val userRouter = Router {
-    val jwt: Jwt = injector.inject()
-    val users: Store<User, String> = injector.inject<Store<User, String>>(User::class)
-
-    authenticate(jwt)
-    get { getUser(users, jwt) }
-    put { putUser(users, jwt) }
+internal val userRouter by lazy {
+    path {
+        use(authenticator)
+        get { getUser(users, jwt) }
+        put { putUser(users, jwt) }
+    }
 }
 
-internal fun Call.putUser(users: Store<User, String>, jwt: Jwt) {
-    val principal = requirePrincipal(jwt)
-    val body = request.body<PutUserRequestRoot>().user
-    val updates = body.convertToMap().mapKeys { it.key.toString() }
+internal fun HttpServerContext.putUser(users: Store<User, String>, jwt: Jwt): HttpServerContext {
+    val principal = parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
+    val body = PutUserRequest(request.bodyMap().requireKeys<Map<*,*>>("user"))
+    val updates = body.toFieldsMap()
 
     val updated = users.updateOne(principal.subject, updates)
 
-    if (updated)
+    return if (updated)
         getUser(users, jwt)
     else
-        halt(500, "Username ${principal.subject} not updated")
+        internalServerError("Username ${principal.subject} not updated")
 }
 
-internal fun Call.getUser(users: Store<User, String>, jwt: Jwt) {
-    val principal = requirePrincipal(jwt)
+internal fun HttpServerContext.getUser(users: Store<User, String>, jwt: Jwt): HttpServerContext {
+    val principal = parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
     val subject = principal.subject
-    val user = users.findOne(subject) ?: halt(404, "User: $subject not found")
+    val user = users.findOne(subject) ?: return notFound("User: $subject not found")
     val token = jwt.sign(user.username)
 
-    ok(UserResponseRoot(user, token), charset = UTF_8)
+    return ok(UserResponseRoot(user, token).serialize(JSON), contentType = contentType)
 }

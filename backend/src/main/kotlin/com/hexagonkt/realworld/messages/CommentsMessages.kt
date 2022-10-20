@@ -1,14 +1,15 @@
 package com.hexagonkt.realworld.messages
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
-import com.hexagonkt.realworld.toIso8601
+import com.hexagonkt.core.requireKeys
 import com.hexagonkt.realworld.services.Comment
 import com.hexagonkt.realworld.services.User
 
-data class CommentRequest(val body: String)
+data class CommentRequest(val body: String) {
 
-data class CommentRequestRoot(val comment: CommentRequest)
+    constructor(data: Map<*, *>) : this(
+        data.requireKeys<String>(CommentRequest::body),
+    )
+}
 
 data class CommentResponse(
     val id: Int,
@@ -17,10 +18,18 @@ data class CommentResponse(
     val body: String,
     val author: AuthorResponse
 ) {
+    constructor(data: Map<*, *>) : this(
+        data.requireKeys(CommentResponse::id),
+        data.requireKeys(CommentResponse::createdAt),
+        data.requireKeys(CommentResponse::updatedAt),
+        data.requireKeys(CommentResponse::body),
+        AuthorResponse(data.requireKeys(CommentResponse::author)),
+    )
+
     constructor(comment: Comment, author: User, user: User?): this(
         id = comment.id,
-        createdAt = comment.createdAt.toIso8601(),
-        updatedAt = comment.updatedAt.toIso8601(),
+        createdAt = comment.createdAt.toUtc(),
+        updatedAt = comment.updatedAt.toUtc(),
         body = comment.body,
         author = AuthorResponse(
             username = author.username,
@@ -30,8 +39,3 @@ data class CommentResponse(
         )
     )
 }
-
-data class CommentResponseRoot(val comment: CommentResponse)
-
-@JsonInclude(NON_NULL)
-data class CommentsResponseRoot(val comments: List<CommentResponse>)

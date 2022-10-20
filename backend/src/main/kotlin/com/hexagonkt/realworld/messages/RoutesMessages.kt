@@ -1,8 +1,11 @@
 package com.hexagonkt.realworld.messages
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
+import com.hexagonkt.core.requireString
+import com.hexagonkt.core.withZone
 import com.hexagonkt.realworld.services.User
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
 data class OkResponse(val message: String)
 
@@ -10,14 +13,21 @@ data class ErrorResponse(val body: List<String> = listOf("Unknown error"))
 
 data class ErrorResponseRoot(val errors: ErrorResponse)
 
-@JsonInclude(NON_NULL)
 data class UserResponse(
     val email: String,
     val username: String,
     val bio: String,
     val image: String,
     val token: String
-)
+) {
+    constructor(data: Map<*, *>) : this(
+        data.requireString(UserResponse::email),
+        data.requireString(UserResponse::username),
+        data.requireString(UserResponse::bio),
+        data.requireString(UserResponse::image),
+        data.requireString(UserResponse::token),
+    )
+}
 
 data class UserResponseRoot(val user: UserResponse) {
     constructor(user: User, token: String) : this(
@@ -30,3 +40,6 @@ data class UserResponseRoot(val user: UserResponse) {
         )
     )
 }
+
+fun LocalDateTime.toUtc(): String =
+    withZone(ZoneId.of("Z")).format(ISO_ZONED_DATE_TIME)

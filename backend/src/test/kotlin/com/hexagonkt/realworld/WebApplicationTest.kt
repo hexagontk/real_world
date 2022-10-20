@@ -1,7 +1,8 @@
 package com.hexagonkt.realworld
 
-import com.hexagonkt.http.client.Client
-import com.hexagonkt.http.client.ahc.AhcAdapter
+import com.hexagonkt.http.client.HttpClient
+import com.hexagonkt.http.client.jetty.JettyClientAdapter
+import com.hexagonkt.realworld.routes.it.mongodbUrl
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.webapp.WebAppContext
 import org.junit.jupiter.api.AfterAll
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.net.InetSocketAddress
+import java.net.URL
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class WebApplicationTest {
@@ -23,11 +26,9 @@ class WebApplicationTest {
     }
 
     @BeforeAll fun startServer() {
-        injector // Force injector loading
+        System.setProperty("mongodbUrl", mongodbUrl)
 
-        val context = WebAppContext().apply {
-
-        }
+        val context = WebAppContext()
         context.contextPath = "/api"
         context.war = "."
         context.addEventListener(WebApplication())
@@ -37,7 +38,10 @@ class WebApplicationTest {
     }
 
     @Test fun `Servlet server starts`() {
-        val response = Client(AhcAdapter(), "http://$hostname:$port/api").get("/articles")
-        assert(response.status == 200)
+        val response = HttpClient(JettyClientAdapter(), URL("http://$hostname:$port/api")).use {
+            it.start()
+            it.get("/articles")
+        }
+        assertEquals(200, response.status.code)
     }
 }

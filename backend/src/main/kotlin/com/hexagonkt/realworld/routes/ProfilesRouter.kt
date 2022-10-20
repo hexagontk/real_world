@@ -1,30 +1,30 @@
 package com.hexagonkt.realworld.routes
 
 import com.auth0.jwt.interfaces.DecodedJWT
-import com.hexagonkt.helpers.require
-import com.hexagonkt.http.server.Call
-import com.hexagonkt.http.server.Router
-import com.hexagonkt.realworld.injector
+import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.require
+import com.hexagonkt.http.server.handlers.HttpServerContext
+import com.hexagonkt.http.server.handlers.path
 import com.hexagonkt.realworld.messages.ProfileResponse
 import com.hexagonkt.realworld.messages.ProfileResponseRoot
-import com.hexagonkt.realworld.rest.Jwt
 import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.users
+import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store
 
-internal val profilesRouter = Router {
-    val jwt: Jwt = injector.inject()
-    val users: Store<User, String> = injector.inject<Store<User, String>>(User::class)
-
-    authenticate(jwt)
-    post("/follow") { followProfile(users, true) }
-    delete("/follow") { followProfile(users, false) }
-    get { getProfile(users) }
+internal val profilesRouter by lazy {
+    path {
+        use(authenticator)
+        post("/follow") { followProfile(users, true) }
+        delete("/follow") { followProfile(users, false) }
+        get { getProfile(users) }
+    }
 }
 
-private fun Call.getProfile(users: Store<User, String>) {
+private fun HttpServerContext.getProfile(users: Store<User, String>): HttpServerContext {
     val principal = attributes["principal"] as DecodedJWT
-    val user = users.findOne(principal.subject) ?: halt(404, "Not Found")
-    val profile = users.findOne(pathParameters.require("username")) ?: halt(404, "Not Found")
+    val user = users.findOne(principal.subject) ?: return notFound("Not Found")
+    val profile = users.findOne(pathParameters.require("username")) ?: return notFound("Not Found")
     val content = ProfileResponseRoot(
         ProfileResponse(
             username = profile.username,
@@ -34,19 +34,21 @@ private fun Call.getProfile(users: Store<User, String>) {
         )
     )
 
-    ok(content, charset = Charsets.UTF_8)
+    return ok(content.serialize(JSON), contentType = contentType)
 }
 
-private fun Call.followProfile(users: Store<User, String>, follow: Boolean) {
+private fun HttpServerContext.followProfile(
+    users: Store<User, String>, follow: Boolean): HttpServerContext {
+
     val principal = attributes["principal"] as DecodedJWT
-    val user = users.findOne(principal.subject) ?: halt(404, "Not Found")
+    val user = users.findOne(principal.subject) ?: return notFound("Not Found")
     val followingList =
         if (follow) user.following + pathParameters["username"]
         else user.following - pathParameters["username"]
     val updated = users.updateOne(principal.subject, mapOf("following" to followingList))
     if (!updated)
-        halt(500)
-    val profile = users.findOne(pathParameters.require("username")) ?: halt(404, "Not Found")
+        return internalServerError()
+    val profile = users.findOne(pathParameters.require("username")) ?: return notFound("Not Found")
     val content = ProfileResponseRoot(
         ProfileResponse(
             username = profile.username,
@@ -56,5 +58,5 @@ private fun Call.followProfile(users: Store<User, String>, follow: Boolean) {
         )
     )
 
-    ok(content, charset = Charsets.UTF_8)
+    return ok(content.serialize(JSON), contentType = contentType)
 }
