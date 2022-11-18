@@ -8,8 +8,7 @@ import com.hexagonkt.core.converters.convert
 import com.hexagonkt.core.logging.LoggingManager
 import com.hexagonkt.http.server.*
 import com.hexagonkt.http.server.jetty.JettyServletAdapter
-import com.hexagonkt.http.server.servlet.ServletServer
-import com.hexagonkt.logging.logback.LogbackLoggingAdapter
+import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
 import com.hexagonkt.realworld.routes.*
 import com.hexagonkt.realworld.services.Article
 import com.hexagonkt.realworld.services.Comment
@@ -21,24 +20,10 @@ import com.hexagonkt.store.mongodb.MongoDbStore
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
 import java.net.URL
-import jakarta.servlet.annotation.WebListener
-import java.net.InetAddress
 
-/**
- * This class is the application's Servlet shell. It allows this application to be bundled
- * in a WAR file and be deployed in any JEE server.
- */
-@WebListener
-@Suppress("unused")
-class WebApplication : ServletServer(router) {
-    init {
-        setUp()
-    }
-}
-
-internal val bindAddress: InetAddress =
-    systemSettingOrNull<String>("bindAddress")?.let(InetAddress::getByName) ?: loopbackInterface
-internal val serverSettings = HttpServerSettings(contextPath = "/api", bindAddress = bindAddress)
+internal val bindAddress = systemSettingOrNull("bindAddress") ?: loopbackInterface
+internal val bindPort = systemSettingOrNull("bindPort") ?: 2010
+internal val serverSettings = HttpServerSettings(bindAddress, bindPort, "/api")
 internal val serverAdapter = JettyServletAdapter()
 internal val server: HttpServer by lazy { HttpServer(serverAdapter, router, serverSettings) }
 internal val jwt: Jwt by lazy { createJwt() }
@@ -142,7 +127,7 @@ internal fun createArticleStore(): Store<Article, String> {
 }
 
 private fun setUp() {
-    LoggingManager.adapter = LogbackLoggingAdapter()
+    LoggingManager.adapter = Slf4jJulLoggingAdapter()
     SerializationManager.defaultFormat = Json
 }
 

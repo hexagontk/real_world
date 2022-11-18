@@ -9,22 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # SET UP
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Install Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-          cache: gradle
-
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
+      - name: Install Java
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: latest
+          java-version: 17
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          components: native-image,llvm
+          cache: gradle
 
-      # BUILD
       - name: Build & Test
         run: .github/pre-push.sh
