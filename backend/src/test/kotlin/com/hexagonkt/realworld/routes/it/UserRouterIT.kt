@@ -1,12 +1,12 @@
 package com.hexagonkt.realworld.routes.it
 
-import com.hexagonkt.core.media.ApplicationMedia
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requireKeys
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
-import com.hexagonkt.http.model.ClientErrorStatus.UNAUTHORIZED
 import com.hexagonkt.http.model.ContentType
+import com.hexagonkt.http.model.UNAUTHORIZED_401
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.messages.ErrorResponse
@@ -45,7 +45,7 @@ class UserRouterIT {
 
     @Test fun `Get and update current user`() {
         val endpoint = URL("http://localhost:${server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(ApplicationMedia.JSON))
+        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 
         val jakeClient = client.initializeUser(jake)
@@ -56,16 +56,16 @@ class UserRouterIT {
 
         client.getUser(jake) {
             val errors = ErrorResponse(bodyMap().requireKeys("errors", "body"))
-            assertEquals(UNAUTHORIZED, status)
-            assertEquals(ContentType(ApplicationMedia.JSON, charset = Charsets.UTF_8), contentType)
+            assertEquals(UNAUTHORIZED_401, status)
+            assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), contentType)
             assert(errors.body.isNotEmpty())
             assertEquals("Unauthorized", errors.body.first())
         }
 
         client.updateUser(jake, PutUserRequest(email = jake.email)) {
             val errors = ErrorResponse(bodyMap().requireKeys("errors", "body"))
-            assertEquals(UNAUTHORIZED, status)
-            assertEquals(ContentType(ApplicationMedia.JSON, charset = Charsets.UTF_8), contentType)
+            assertEquals(UNAUTHORIZED_401, status)
+            assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), contentType)
             assert(errors.body.isNotEmpty())
         }
     }

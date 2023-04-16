@@ -1,15 +1,12 @@
 package com.hexagonkt.realworld
 
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requireKeys
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.model.HttpClientResponse
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.*
-import com.hexagonkt.http.model.ClientErrorStatus.NOT_FOUND
-import com.hexagonkt.http.model.SuccessStatus.CREATED
-import com.hexagonkt.http.model.SuccessStatus.OK
 import com.hexagonkt.realworld.messages.*
 import com.hexagonkt.realworld.routes.contentType
 import com.hexagonkt.realworld.services.Article
@@ -43,7 +40,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun registerUser(user: User) {
         registerUser(user) {
-            assertEquals(CREATED, status)
+            assertEquals(CREATED_201, status)
 
             val userResponse = UserResponse(bodyMap().requireKeys("user"))
             assertEquals(user.username, userResponse.username)
@@ -53,12 +50,12 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun registerUser(user: User, callback: HttpClientResponse.() -> Unit) {
-        client.post("/users", mapOf("user" to user.toRegistrationRequest()).serialize(JSON)).apply(callback)
+        client.post("/users", mapOf("user" to user.toRegistrationRequest()).serialize(APPLICATION_JSON)).apply(callback)
     }
 
     fun loginUser(user: User): RealWorldClient {
-        val header = client.post("/users/login", mapOf("user" to user.toLoginRequest()).serialize(JSON)).let {
-            assertEquals(OK, it.status)
+        val header = client.post("/users/login", mapOf("user" to user.toLoginRequest()).serialize(APPLICATION_JSON)).let {
+            assertEquals(OK_200, it.status)
             assertEquals(contentType, it.contentType)
 
             val userResponse = UserResponse(it.bodyMap().requireKeys("user"))
@@ -86,7 +83,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun getUser(user: User) {
         getUser(user) {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val userResponse = UserResponse(bodyMap().requireKeys("user"))
@@ -102,7 +99,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun updateUser(user: User, updateRequest: PutUserRequest) {
         updateUser(user, updateRequest) {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val userResponse = UserResponse(bodyMap().requireKeys("user"))
@@ -113,12 +110,12 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun updateUser(user: User, updateRequest: PutUserRequest, callback: HttpClientResponse.(User) -> Unit) {
-        client.put("/user", mapOf("user" to updateRequest).serialize(JSON)).apply { callback(user) }
+        client.put("/user", mapOf("user" to updateRequest).serialize(APPLICATION_JSON)).apply { callback(user) }
     }
 
     fun getProfile(user: User, following: Boolean) {
         client.get("/profiles/${user.username}").apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val profileResponse = ProfileResponse(bodyMap())
@@ -132,7 +129,7 @@ internal class RealWorldClient(val client: HttpClient) {
         val response = if (follow) client.post(url) else client.delete(url)
 
         response.apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val profileResponse = ProfileResponse(bodyMap())
@@ -142,8 +139,8 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun postArticle(article: Article) {
-        client.post("/articles", mapOf("article" to article.toCreationRequest()).serialize(JSON)).apply {
-            assertEquals(OK, status)
+        client.post("/articles", mapOf("article" to article.toCreationRequest()).serialize(APPLICATION_JSON)).apply {
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val postArticleResponse = ArticleCreationResponse(bodyMap().requireKeys("article"))
@@ -159,7 +156,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun getArticle(slug: String) {
         client.get("/articles/$slug").apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val getArticleResponse = ArticleResponse(bodyMap().requireKeys("article"))
@@ -169,10 +166,10 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun deleteArticle(slug: String) {
         client.delete("/articles/$slug").apply {
-            assert(status in setOf(OK, NOT_FOUND))
+            assert(status in setOf(OK_200, NOT_FOUND_404))
             assertEquals(contentType, contentType)
 
-            if (status == OK)
+            if (status == OK_200)
                 assertEquals("Article $slug deleted", OkResponse(bodyMap().requireKeys("message")).message)
             else
                 assertEquals("Article $slug not found", ErrorResponse(bodyMap().requireKeys("errors", "body")).body.first())
@@ -180,8 +177,8 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun updateArticle(article: Article, updateRequest: PutArticleRequest) {
-        client.put("/articles/${article.slug}", mapOf("article" to updateRequest).serialize(JSON)).apply {
-            assertEquals(OK, status)
+        client.put("/articles/${article.slug}", mapOf("article" to updateRequest).serialize(APPLICATION_JSON)).apply {
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val responseArticle = ArticleCreationResponse(bodyMap().requireKeys("article"))
@@ -194,7 +191,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun getFeed(vararg articles: Article) {
         client.get("/articles/feed").apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val feedArticles = bodyMap().requireKeys<List<Map<*, *>>>("articles").map { ArticleResponse(it) }
@@ -212,7 +209,7 @@ internal class RealWorldClient(val client: HttpClient) {
         val response = if (favorite) client.post(url) else client.delete(url)
 
         response.apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val profileResponse = ArticleResponse(bodyMap().requireKeys("article"))
@@ -235,15 +232,15 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun createComment(article: String, comment: CommentRequest) {
-        client.post("/articles/$article/comments", mapOf("comment" to comment).serialize(JSON)).apply {
-            assert(status in setOf(OK, NOT_FOUND))
+        client.post("/articles/$article/comments", mapOf("comment" to comment).serialize(APPLICATION_JSON)).apply {
+            assert(status in setOf(OK_200, NOT_FOUND_404))
             assertEquals(contentType, contentType)
 
-            if (status == OK) {
+            if (status == OK_200) {
                 val commentsResponse = CommentResponse(bodyMap().requireKeys("comment"))
                 assertEquals(comment.body, commentsResponse.body)
             }
-            else if (status == NOT_FOUND) {
+            else if (status == NOT_FOUND_404) {
                 val commentsResponse = ErrorResponse(bodyMap().requireKeys("errors", "body"))
                 assertEquals("$article article not found", commentsResponse.body.first())
             }
@@ -252,7 +249,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun deleteComment(article: String, id: Int) {
         client.delete("/articles/$article/comments/$id").apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
             assertEquals("$id deleted", OkResponse(bodyMap().requireKeys("message")).message)
         }
@@ -260,7 +257,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun getComments(article: String, vararg ids: Int) {
         client.get("/articles/$article/comments").apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val commentsResponse = bodyMap().requireKeys<List<Map<*, *>>>("comments").map { CommentResponse(it) }
@@ -271,7 +268,7 @@ internal class RealWorldClient(val client: HttpClient) {
 
     fun getTags(vararg expectedTags: String) {
         client.get("/tags").apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val tags = bodyMap().requireKeys<Collection<String>>("tags")
@@ -291,7 +288,7 @@ internal class RealWorldClient(val client: HttpClient) {
             .joinToString("&", "?")
 
         client.get("/articles$queryString").apply {
-            assertEquals(OK, status)
+            assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
             val articles = bodyMap().requireKeys<List<Map<*, *>>>("articles").map { ArticleResponse(it) }

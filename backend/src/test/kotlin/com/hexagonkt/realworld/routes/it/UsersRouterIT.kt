@@ -1,13 +1,13 @@
 package com.hexagonkt.realworld.routes.it
 
 import com.hexagonkt.core.Jvm
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requireKeys
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.ContentType
-import com.hexagonkt.http.model.ServerErrorStatus.INTERNAL_SERVER_ERROR
+import com.hexagonkt.http.model.INTERNAL_SERVER_ERROR_500
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.messages.ErrorResponse
@@ -54,14 +54,14 @@ class UsersRouterIT {
 
     @Test fun `Delete, login and register users`() {
         val endpoint = URL("http://localhost:${port ?: server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(JSON))
+        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 
         client.deleteUser(jake)
         client.deleteUser(jake, setOf(404))
         client.registerUser(jake)
         client.registerUser(jake) {
-            assertEquals(INTERNAL_SERVER_ERROR, status)
+            assertEquals(INTERNAL_SERVER_ERROR_500, status)
             assertEquals(contentType, contentType)
 
             val errors = ErrorResponse(bodyMap().requireKeys("errors", "body"))

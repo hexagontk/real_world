@@ -2,7 +2,7 @@
 services:
 
   mongodb:
-    image: mongo:5.0-focal
+    image: mongo:6.0-jammy
     ports:
       - "3010:27017"
 

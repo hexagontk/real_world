@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.routes
 
 import com.auth0.jwt.interfaces.DecodedJWT
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.http.server.handlers.HttpServerContext
 import com.hexagonkt.http.server.handlers.path
@@ -34,7 +34,7 @@ private fun HttpServerContext.getProfile(users: Store<User, String>): HttpServer
         )
     )
 
-    return ok(content.serialize(JSON), contentType = contentType)
+    return ok(content.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
 private fun HttpServerContext.followProfile(
@@ -58,5 +58,5 @@ private fun HttpServerContext.followProfile(
         )
     )
 
-    return ok(content.serialize(JSON), contentType = contentType)
+    return ok(content.serialize(APPLICATION_JSON), contentType = contentType)
 }

@@ -1,6 +1,7 @@
 package com.hexagonkt.realworld.messages
 
 import com.hexagonkt.core.*
+import com.hexagonkt.helpers.*
 import com.hexagonkt.realworld.services.Article
 import com.hexagonkt.realworld.services.User
 

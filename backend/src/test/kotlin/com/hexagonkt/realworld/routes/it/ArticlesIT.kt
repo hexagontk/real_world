@@ -1,6 +1,6 @@
 package com.hexagonkt.realworld.routes.it
 
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
@@ -68,7 +68,7 @@ class ArticlesIT {
 
     @Test fun `Delete, create update and get an article`() {
         val endpoint = URL("http://localhost:${server.runtimePort}/api")
-        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val settings = HttpClientSettings(contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
 
         val jakeClient = client.initializeUser(jake)
@@ -82,7 +82,7 @@ class ArticlesIT {
 
     @Test fun `Favorite and un-favorite articles`() {
         val endpoint = URL("http://localhost:${server.runtimePort}/api")
-        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val settings = HttpClientSettings(contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
         val user = jake.username
 
@@ -111,7 +111,7 @@ class ArticlesIT {
 
     @Test fun `Find articles filters correctly`() {
         val endpoint = URL("http://localhost:${server.runtimePort}/api")
-        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val settings = HttpClientSettings(contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
 
         val jakeClient = client.initializeUser(jake)
@@ -149,7 +149,7 @@ class ArticlesIT {
 
     @Test fun `Get user feed`() {
         val endpoint = URL("http://localhost:${server.runtimePort}/api")
-        val settings = HttpClientSettings(contentType = ContentType(JSON))
+        val settings = HttpClientSettings(contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), endpoint, settings))
 
         val jakeClient = client.initializeUser(jake)

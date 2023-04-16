@@ -1,10 +1,10 @@
 package com.hexagonkt.realworld.routes
 
 import com.auth0.jwt.interfaces.DecodedJWT
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requireKeys
-import com.hexagonkt.core.withZone
+import com.hexagonkt.helpers.withZone
 import com.hexagonkt.http.server.handlers.HttpServerContext
 import com.hexagonkt.http.server.handlers.path
 import com.hexagonkt.realworld.*
@@ -61,7 +61,7 @@ internal fun HttpServerContext.findArticles(
         .mapValues { it.value.value }
 
     val foundArticles = searchArticles(users, articles, subject, filter)
-    return ok(foundArticles.serialize(JSON), contentType = contentType)
+    return ok(foundArticles.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
 private fun HttpServerContext.createArticle(
@@ -81,7 +81,7 @@ private fun HttpServerContext.createArticle(
     articles.insertOne(article)
 
     val articleCreationResponseRoot = ArticleCreationResponseRoot(article, principal.subject)
-    return ok(articleCreationResponseRoot.serialize(JSON), contentType = contentType)
+    return ok(articleCreationResponseRoot.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
 internal fun HttpServerContext.favoriteArticle(
@@ -106,7 +106,7 @@ internal fun HttpServerContext.favoriteArticle(
     val favoritedArticle = article.copy(favoritedBy = favoritedBy)
 
     val articleResponseRoot = ArticleResponseRoot(favoritedArticle, author, user)
-    val body = articleResponseRoot.serialize(JSON)
+    val body = articleResponseRoot.serialize(APPLICATION_JSON)
     return ok(body, contentType = contentType)
 }
 
@@ -118,7 +118,7 @@ internal fun HttpServerContext.getArticle(
     val author = checkNotNull(users.findOne(article.author))
     val user = users.findOne(principal?.subject ?: "")
 
-    return ok(ArticleResponseRoot(article, author, user).serialize(JSON), contentType = contentType)
+    return ok(ArticleResponseRoot(article, author, user).serialize(APPLICATION_JSON), contentType = contentType)
 }
 
 internal fun HttpServerContext.updateArticle(jwt: Jwt, articles: Store<Article, String>): HttpServerContext {
@@ -138,7 +138,7 @@ internal fun HttpServerContext.updateArticle(jwt: Jwt, articles: Store<Article, 
 
     return if (updated) {
         val article = checkNotNull(articles.findOne(slug))
-        val content = ArticleCreationResponseRoot(article, principal.subject).serialize(JSON)
+        val content = ArticleCreationResponseRoot(article, principal.subject).serialize(APPLICATION_JSON)
         ok(content, contentType = contentType)
     }
     else {
@@ -152,7 +152,7 @@ internal fun HttpServerContext.deleteArticle(jwt: Jwt, articles: Store<Article, 
     return if (!articles.deleteOne(slug))
         notFound("Article $slug not found")
     else
-        ok(OkResponse("Article $slug deleted").serialize(JSON), contentType = contentType)
+        ok(OkResponse("Article $slug deleted").serialize(APPLICATION_JSON), contentType = contentType)
 }
 
 internal fun HttpServerContext.getFeed(jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpServerContext {
@@ -167,7 +167,7 @@ internal fun HttpServerContext.getFeed(jwt: Jwt, users: Store<User, String>, art
         searchArticles(users, articles, principal.subject, filter)
     }
 
-    return ok(feedArticles.serialize(JSON), contentType = contentType)
+    return ok(feedArticles.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
 internal fun String.toSlug() =

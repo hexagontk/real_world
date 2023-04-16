@@ -1,6 +1,6 @@
 package com.hexagonkt.realworld.routes
 
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.server.handlers.path
 import com.hexagonkt.realworld.createArticleStore
 import com.hexagonkt.realworld.messages.TagsResponseRoot
@@ -25,7 +25,7 @@ internal val tagsRouter by lazy {
                 }
                 .distinct()
 
-            ok(TagsResponseRoot(tags).serialize(JSON), contentType = contentType)
+            ok(TagsResponseRoot(tags).serialize(APPLICATION_JSON), contentType = contentType)
         }
     }
 }

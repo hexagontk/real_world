@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.messages
 
 import com.hexagonkt.core.fieldsMapOf
-import com.hexagonkt.core.getString
+import com.hexagonkt.helpers.getString
 
 data class PutUserRequest(
     val email: String? = null,

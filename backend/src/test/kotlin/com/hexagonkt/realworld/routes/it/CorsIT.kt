@@ -1,6 +1,6 @@
 package com.hexagonkt.realworld.routes.it
 
-import com.hexagonkt.core.media.ApplicationMedia
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
@@ -33,7 +33,7 @@ class CorsIT {
 
     @Test
     fun `OPTIONS returns correct CORS headers`() {
-        val settings = HttpClientSettings(contentType = ContentType(ApplicationMedia.JSON))
+        val settings = HttpClientSettings(contentType = ContentType(APPLICATION_JSON))
         val baseUrl = URL("http://localhost:${server.runtimePort}/api")
         val client = HttpClient(JettyClientAdapter(), baseUrl, settings)
         client.start()

@@ -1,9 +1,8 @@
 package com.hexagonkt.realworld.routes
 
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requireKeys
-import com.hexagonkt.http.model.ClientErrorStatus.UNAUTHORIZED
 import com.hexagonkt.http.server.handlers.HttpServerContext
 import com.hexagonkt.http.server.handlers.path
 import com.hexagonkt.realworld.jwt
@@ -35,7 +34,7 @@ private fun HttpServerContext.register(users: Store<User, String>, jwt: Jwt): Ht
             image = "",
             token = jwt.sign(key)
         )
-    ).serialize(JSON)
+    ).serialize(APPLICATION_JSON)
 
     return created(content, contentType = contentType)
 }
@@ -45,10 +44,10 @@ private fun HttpServerContext.login(users: Store<User, String>, jwt: Jwt): HttpS
     val filter = mapOf(User::email.name to bodyUser.email)
     val user = users.findOne(filter) ?: return notFound("Not Found")
     return if (user.password == bodyUser.password) {
-        val content = UserResponseRoot(user, jwt.sign(user.username)).serialize(JSON)
+        val content = UserResponseRoot(user, jwt.sign(user.username)).serialize(APPLICATION_JSON)
         ok(content, contentType = contentType)
     } else {
-        clientError(UNAUTHORIZED, "Bad credentials")
+         unauthorized("Bad credentials")
     }
 }
 
@@ -57,7 +56,7 @@ private fun HttpServerContext.deleteUser(users: Store<User, String>): HttpServer
     val username = pathParameters.require("username")
     val deleteOne = users.deleteOne(username)
     return if (deleteOne)
-        ok(OkResponse("$username deleted").serialize(JSON), contentType = contentType)
+        ok(OkResponse("$username deleted").serialize(APPLICATION_JSON), contentType = contentType)
     else
         notFound("$username not found")
 }

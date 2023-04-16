@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.messages
 
-import com.hexagonkt.core.requireString
-import com.hexagonkt.core.withZone
+import com.hexagonkt.helpers.requireString
+import com.hexagonkt.helpers.withZone
 import com.hexagonkt.realworld.services.User
 import java.time.LocalDateTime
 import java.time.ZoneId

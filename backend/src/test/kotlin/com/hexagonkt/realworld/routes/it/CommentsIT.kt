@@ -1,6 +1,6 @@
 package com.hexagonkt.realworld.routes.it
 
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
@@ -50,7 +50,7 @@ class CommentsIT {
 
     @Test fun `Delete, create and get article's comments`() {
         val endpoint = URL("http://localhost:${server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(JSON))
+        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 
         val jakeClient = client.initializeUser(jake)
@@ -65,7 +65,7 @@ class CommentsIT {
 
     @Test fun `Get article's comments without login`() {
         val endpoint = URL("http://localhost:${server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(JSON))
+        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 
         val jakeClient = client.initializeUser(jake)

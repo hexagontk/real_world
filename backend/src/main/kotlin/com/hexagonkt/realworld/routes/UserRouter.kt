@@ -1,6 +1,6 @@
 package com.hexagonkt.realworld.routes
 
-import com.hexagonkt.core.media.ApplicationMedia.JSON
+import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requireKeys
 import com.hexagonkt.http.server.handlers.HttpServerContext
 import com.hexagonkt.http.server.handlers.path
@@ -41,5 +41,5 @@ internal fun HttpServerContext.getUser(users: Store<User, String>, jwt: Jwt): Ht
     val user = users.findOne(subject) ?: return notFound("User: $subject not found")
     val token = jwt.sign(user.username)
 
-    return ok(UserResponseRoot(user, token).serialize(JSON), contentType = contentType)
+    return ok(UserResponseRoot(user, token).serialize(APPLICATION_JSON), contentType = contentType)
 }
