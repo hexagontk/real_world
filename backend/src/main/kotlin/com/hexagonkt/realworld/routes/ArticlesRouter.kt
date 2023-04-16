@@ -3,10 +3,10 @@ package com.hexagonkt.realworld.routes
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
-import com.hexagonkt.core.requireKeys
+import com.hexagonkt.core.requirePath
 import com.hexagonkt.helpers.withZone
-import com.hexagonkt.http.server.handlers.HttpServerContext
-import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.*
 import com.hexagonkt.realworld.articles
 import com.hexagonkt.realworld.jwt
@@ -45,8 +45,8 @@ internal val articlesRouter by lazy {
     }
 }
 
-internal fun HttpServerContext.findArticles(
-    jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpServerContext {
+internal fun HttpContext.findArticles(
+    jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
 
     val principal = parsePrincipal(jwt)
     val subject = principal?.subject
@@ -64,11 +64,11 @@ internal fun HttpServerContext.findArticles(
     return ok(foundArticles.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
-private fun HttpServerContext.createArticle(
+private fun HttpContext.createArticle(
     jwt: Jwt, articles: Store<Article, String>
-): HttpServerContext {
+): HttpContext {
     val principal = parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
-    val bodyArticle = ArticleRequest(request.bodyMap().requireKeys("article"))
+    val bodyArticle = ArticleRequest(request.bodyMap().requirePath("article"))
     val article = Article(
         slug = bodyArticle.title.toSlug(),
         author = principal.subject,
@@ -84,9 +84,9 @@ private fun HttpServerContext.createArticle(
     return ok(articleCreationResponseRoot.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
-internal fun HttpServerContext.favoriteArticle(
+internal fun HttpContext.favoriteArticle(
     users: Store<User, String>, articles: Store<Article, String>, favorite: Boolean
-): HttpServerContext {
+): HttpContext {
 
     val principal = attributes["principal"] as DecodedJWT
     val slug = pathParameters.require("slug")
@@ -110,8 +110,8 @@ internal fun HttpServerContext.favoriteArticle(
     return ok(body, contentType = contentType)
 }
 
-internal fun HttpServerContext.getArticle(
-    jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpServerContext {
+internal fun HttpContext.getArticle(
+    jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
 
     val principal = parsePrincipal(jwt)
     val article = articles.findOne(pathParameters.require("slug")) ?: return notFound()
@@ -121,9 +121,9 @@ internal fun HttpServerContext.getArticle(
     return ok(ArticleResponseRoot(article, author, user).serialize(APPLICATION_JSON), contentType = contentType)
 }
 
-internal fun HttpServerContext.updateArticle(jwt: Jwt, articles: Store<Article, String>): HttpServerContext {
+internal fun HttpContext.updateArticle(jwt: Jwt, articles: Store<Article, String>): HttpContext {
     val principal = parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
-    val body = request.bodyMap().requireKeys<Map<String,Any>>("article").let(::PutArticleRequest)
+    val body = request.bodyMap().requirePath<Map<String,Any>>("article").let(::PutArticleRequest)
     val slug = pathParameters.require("slug")
 
     val updatedAt = LocalDateTime.now()
@@ -146,7 +146,7 @@ internal fun HttpServerContext.updateArticle(jwt: Jwt, articles: Store<Article, 
     }
 }
 
-internal fun HttpServerContext.deleteArticle(jwt: Jwt, articles: Store<Article, String>): HttpServerContext {
+internal fun HttpContext.deleteArticle(jwt: Jwt, articles: Store<Article, String>): HttpContext {
     parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
     val slug = pathParameters.require("slug")
     return if (!articles.deleteOne(slug))
@@ -155,7 +155,7 @@ internal fun HttpServerContext.deleteArticle(jwt: Jwt, articles: Store<Article, 
         ok(OkResponse("Article $slug deleted").serialize(APPLICATION_JSON), contentType = contentType)
 }
 
-internal fun HttpServerContext.getFeed(jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpServerContext {
+internal fun HttpContext.getFeed(jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
     val principal = parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
     val user = users.findOne(principal.subject) ?: return notFound()
 
@@ -173,7 +173,7 @@ internal fun HttpServerContext.getFeed(jwt: Jwt, users: Store<User, String>, art
 internal fun String.toSlug() =
     this.lowercase().replace(' ', '-')
 
-internal fun HttpServerContext.searchArticles(
+internal fun HttpContext.searchArticles(
     users: Store<User, String>,
     articles: Store<Article, String>,
     subject: String?,

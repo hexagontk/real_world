@@ -2,7 +2,7 @@ package com.hexagonkt.realworld.routes.it
 
 import com.hexagonkt.core.Jvm
 import com.hexagonkt.core.media.APPLICATION_JSON
-import com.hexagonkt.core.requireKeys
+import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
@@ -64,7 +64,7 @@ class UsersRouterIT {
             assertEquals(INTERNAL_SERVER_ERROR_500, status)
             assertEquals(contentType, contentType)
 
-            val errors = ErrorResponse(bodyMap().requireKeys("errors", "body"))
+            val errors = ErrorResponse(bodyMap().requirePath("errors", "body"))
             val exception = "MongoWriteException: Write operation error on server localhost"
             val message = "WriteError{code=11000, message='E11000 duplicate key error collection"
             val key = """real_world.User index: _id_ dup key: { _id: "${jake.username}" }', details={}}."""

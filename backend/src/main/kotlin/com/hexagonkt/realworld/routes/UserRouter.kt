@@ -1,9 +1,9 @@
 package com.hexagonkt.realworld.routes
 
 import com.hexagonkt.core.media.APPLICATION_JSON
-import com.hexagonkt.core.requireKeys
-import com.hexagonkt.http.server.handlers.HttpServerContext
-import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.core.requirePath
+import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.jwt
 import com.hexagonkt.realworld.messages.PutUserRequest
 import com.hexagonkt.realworld.messages.UserResponseRoot
@@ -22,9 +22,9 @@ internal val userRouter by lazy {
     }
 }
 
-internal fun HttpServerContext.putUser(users: Store<User, String>, jwt: Jwt): HttpServerContext {
+internal fun HttpContext.putUser(users: Store<User, String>, jwt: Jwt): HttpContext {
     val principal = parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
-    val body = PutUserRequest(request.bodyMap().requireKeys<Map<*,*>>("user"))
+    val body = PutUserRequest(request.bodyMap().requirePath<Map<*,*>>("user"))
     val updates = body.toFieldsMap()
 
     val updated = users.updateOne(principal.subject, updates)
@@ -35,7 +35,7 @@ internal fun HttpServerContext.putUser(users: Store<User, String>, jwt: Jwt): Ht
         internalServerError("Username ${principal.subject} not updated")
 }
 
-internal fun HttpServerContext.getUser(users: Store<User, String>, jwt: Jwt): HttpServerContext {
+internal fun HttpContext.getUser(users: Store<User, String>, jwt: Jwt): HttpContext {
     val principal = parsePrincipal(jwt) ?: return unauthorized("Unauthorized")
     val subject = principal.subject
     val user = users.findOne(subject) ?: return notFound("User: $subject not found")

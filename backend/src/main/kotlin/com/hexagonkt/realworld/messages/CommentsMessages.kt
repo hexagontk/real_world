@@ -1,13 +1,13 @@
 package com.hexagonkt.realworld.messages
 
-import com.hexagonkt.core.requireKeys
+import com.hexagonkt.core.requirePath
 import com.hexagonkt.realworld.services.Comment
 import com.hexagonkt.realworld.services.User
 
 data class CommentRequest(val body: String) {
 
     constructor(data: Map<*, *>) : this(
-        data.requireKeys<String>(CommentRequest::body),
+        data.requirePath<String>(CommentRequest::body),
     )
 }
 
@@ -19,11 +19,11 @@ data class CommentResponse(
     val author: AuthorResponse
 ) {
     constructor(data: Map<*, *>) : this(
-        data.requireKeys(CommentResponse::id),
-        data.requireKeys(CommentResponse::createdAt),
-        data.requireKeys(CommentResponse::updatedAt),
-        data.requireKeys(CommentResponse::body),
-        AuthorResponse(data.requireKeys(CommentResponse::author)),
+        data.requirePath(CommentResponse::id),
+        data.requirePath(CommentResponse::createdAt),
+        data.requirePath(CommentResponse::updatedAt),
+        data.requirePath(CommentResponse::body),
+        AuthorResponse(data.requirePath(CommentResponse::author)),
     )
 
     constructor(comment: Comment, author: User, user: User?): this(

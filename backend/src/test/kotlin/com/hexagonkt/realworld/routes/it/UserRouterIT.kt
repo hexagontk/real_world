@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.routes.it
 
 import com.hexagonkt.core.media.APPLICATION_JSON
-import com.hexagonkt.core.requireKeys
+import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
@@ -55,7 +55,7 @@ class UserRouterIT {
         jakeClient.updateUser(jake, PutUserRequest(email = "changed.${jake.email}"))
 
         client.getUser(jake) {
-            val errors = ErrorResponse(bodyMap().requireKeys("errors", "body"))
+            val errors = ErrorResponse(bodyMap().requirePath("errors", "body"))
             assertEquals(UNAUTHORIZED_401, status)
             assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), contentType)
             assert(errors.body.isNotEmpty())
@@ -63,7 +63,7 @@ class UserRouterIT {
         }
 
         client.updateUser(jake, PutUserRequest(email = jake.email)) {
-            val errors = ErrorResponse(bodyMap().requireKeys("errors", "body"))
+            val errors = ErrorResponse(bodyMap().requirePath("errors", "body"))
             assertEquals(UNAUTHORIZED_401, status)
             assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), contentType)
             assert(errors.body.isNotEmpty())

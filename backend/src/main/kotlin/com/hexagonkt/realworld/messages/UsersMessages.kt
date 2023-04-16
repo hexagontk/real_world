@@ -1,6 +1,6 @@
 package com.hexagonkt.realworld.messages
 
-import com.hexagonkt.core.requireKeys
+import com.hexagonkt.core.requirePath
 
 data class RegistrationRequest(
     val email: String,
@@ -8,9 +8,9 @@ data class RegistrationRequest(
     val password: String
 ) {
     constructor(data: Map<*, *>) : this(
-        data.requireKeys(RegistrationRequest::email),
-        data.requireKeys(RegistrationRequest::username),
-        data.requireKeys(RegistrationRequest::password),
+        data.requirePath(RegistrationRequest::email),
+        data.requirePath(RegistrationRequest::username),
+        data.requirePath(RegistrationRequest::password),
     )
 }
 
@@ -19,7 +19,7 @@ data class LoginRequest(
     val password: String
 ) {
     constructor(data: Map<*, *>) : this(
-        data.requireKeys(LoginRequest::email),
-        data.requireKeys(LoginRequest::password),
+        data.requirePath(LoginRequest::email),
+        data.requirePath(LoginRequest::password),
     )
 }

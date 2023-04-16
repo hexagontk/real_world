@@ -2,8 +2,8 @@ package com.hexagonkt.realworld.routes
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
-import com.hexagonkt.core.requireKeys
-import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.core.requirePath
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.*
 import com.hexagonkt.realworld.articles
 import com.hexagonkt.realworld.jwt
@@ -21,7 +21,7 @@ internal val commentsRouter = path {
         val article = articles.findOne(slug) ?: return@post notFound("$slug article not found")
         val author = users.findOne(article.author) ?: return@post notFound("${article.author} user not found")
         val user = users.findOne(subject) ?: return@post notFound("$subject user not found")
-        val commentRequest = CommentRequest(request.bodyMap().requireKeys<Map<String, Any>>("comment"))
+        val commentRequest = CommentRequest(request.bodyMap().requirePath<Map<String, Any>>("comment"))
         val comment = Comment(
             id = (article.comments.maxOfOrNull { it.id } ?: 0) + 1,
             author = subject,

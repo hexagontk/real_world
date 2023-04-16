@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.routes
 
 import com.hexagonkt.core.media.APPLICATION_JSON
-import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.createArticleStore
 import com.hexagonkt.realworld.messages.TagsResponseRoot
 import com.hexagonkt.realworld.services.Article

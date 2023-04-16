@@ -2,9 +2,9 @@ package com.hexagonkt.realworld.routes
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
-import com.hexagonkt.core.requireKeys
-import com.hexagonkt.http.server.handlers.HttpServerContext
-import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.core.requirePath
+import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.jwt
 import com.hexagonkt.realworld.messages.*
 import com.hexagonkt.realworld.Jwt
@@ -22,8 +22,8 @@ internal val usersRouter by lazy {
     }
 }
 
-private fun HttpServerContext.register(users: Store<User, String>, jwt: Jwt): HttpServerContext {
-    val user = RegistrationRequest(request.bodyMap().requireKeys("user"))
+private fun HttpContext.register(users: Store<User, String>, jwt: Jwt): HttpContext {
+    val user = RegistrationRequest(request.bodyMap().requirePath("user"))
 
     val key = users.insertOne(User(user.username, user.email, user.password))
     val content = UserResponseRoot(
@@ -39,8 +39,8 @@ private fun HttpServerContext.register(users: Store<User, String>, jwt: Jwt): Ht
     return created(content, contentType = contentType)
 }
 
-private fun HttpServerContext.login(users: Store<User, String>, jwt: Jwt): HttpServerContext {
-    val bodyUser = LoginRequest(request.bodyMap().requireKeys("user"))
+private fun HttpContext.login(users: Store<User, String>, jwt: Jwt): HttpContext {
+    val bodyUser = LoginRequest(request.bodyMap().requirePath("user"))
     val filter = mapOf(User::email.name to bodyUser.email)
     val user = users.findOne(filter) ?: return notFound("Not Found")
     return if (user.password == bodyUser.password) {
@@ -52,7 +52,7 @@ private fun HttpServerContext.login(users: Store<User, String>, jwt: Jwt): HttpS
 }
 
 // TODO Authenticate and require 'root' user or owner
-private fun HttpServerContext.deleteUser(users: Store<User, String>): HttpServerContext {
+private fun HttpContext.deleteUser(users: Store<User, String>): HttpContext {
     val username = pathParameters.require("username")
     val deleteOne = users.deleteOne(username)
     return if (deleteOne)

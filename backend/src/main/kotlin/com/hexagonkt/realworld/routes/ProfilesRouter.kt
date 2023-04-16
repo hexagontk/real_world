@@ -3,8 +3,8 @@ package com.hexagonkt.realworld.routes
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
-import com.hexagonkt.http.server.handlers.HttpServerContext
-import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.messages.ProfileResponse
 import com.hexagonkt.realworld.messages.ProfileResponseRoot
 import com.hexagonkt.realworld.services.User
@@ -21,7 +21,7 @@ internal val profilesRouter by lazy {
     }
 }
 
-private fun HttpServerContext.getProfile(users: Store<User, String>): HttpServerContext {
+private fun HttpContext.getProfile(users: Store<User, String>): HttpContext {
     val principal = attributes["principal"] as DecodedJWT
     val user = users.findOne(principal.subject) ?: return notFound("Not Found")
     val profile = users.findOne(pathParameters.require("username")) ?: return notFound("Not Found")
@@ -37,8 +37,8 @@ private fun HttpServerContext.getProfile(users: Store<User, String>): HttpServer
     return ok(content.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
-private fun HttpServerContext.followProfile(
-    users: Store<User, String>, follow: Boolean): HttpServerContext {
+private fun HttpContext.followProfile(
+    users: Store<User, String>, follow: Boolean): HttpContext {
 
     val principal = attributes["principal"] as DecodedJWT
     val user = users.findOne(principal.subject) ?: return notFound("Not Found")

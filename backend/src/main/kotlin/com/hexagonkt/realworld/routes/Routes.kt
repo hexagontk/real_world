@@ -8,9 +8,9 @@ import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.HttpStatus
 import com.hexagonkt.http.server.callbacks.CorsCallback
 import com.hexagonkt.http.server.callbacks.LoggingCallback
-import com.hexagonkt.http.server.handlers.HttpServerContext
-import com.hexagonkt.http.server.handlers.filter
-import com.hexagonkt.http.server.handlers.path
+import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.filter
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.jwt
 import com.hexagonkt.realworld.messages.ErrorResponse
 import com.hexagonkt.realworld.messages.ErrorResponseRoot
@@ -42,7 +42,7 @@ internal val router by lazy {
     }
 }
 
-internal fun HttpServerContext.statusCodeHandler(status: HttpStatus, body: Any): HttpServerContext {
+internal fun HttpContext.statusCodeHandler(status: HttpStatus, body: Any): HttpContext {
     val messages = when (body) {
         is List<*> -> body.mapNotNull { it?.toString() }
         else -> listOf(body.toString())
@@ -51,7 +51,7 @@ internal fun HttpServerContext.statusCodeHandler(status: HttpStatus, body: Any):
     return send(status, ErrorResponseRoot(ErrorResponse(messages)).serialize(APPLICATION_JSON), contentType = contentType)
 }
 
-internal fun HttpServerContext.multipleExceptionHandler(error: Exception): HttpServerContext {
+internal fun HttpContext.multipleExceptionHandler(error: Exception): HttpContext {
     return if (error is MultipleException) {
         val messages = error.causes.map { it.message ?: "<no message>" }
         internalServerError(ErrorResponseRoot(ErrorResponse(messages)), contentType = contentType)
@@ -59,7 +59,7 @@ internal fun HttpServerContext.multipleExceptionHandler(error: Exception): HttpS
     else this
 }
 
-internal fun HttpServerContext.exceptionHandler(error: Exception): HttpServerContext {
+internal fun HttpContext.exceptionHandler(error: Exception): HttpContext {
     val errorMessage = error.javaClass.simpleName + ": " + (error.message ?: "<no message>")
     val errorResponseRoot = ErrorResponseRoot(ErrorResponse(listOf(errorMessage)))
     return internalServerError(errorResponseRoot.serialize(APPLICATION_JSON), contentType = contentType)
@@ -72,7 +72,7 @@ val authenticator = filter("*") {
     else send(attributes = attributes + ("principal" to principal)).next()
 }
 
-internal fun HttpServerContext.parsePrincipal(jwt: Jwt): DecodedJWT? {
+internal fun HttpContext.parsePrincipal(jwt: Jwt): DecodedJWT? {
     val token = request.authorization
 
     return if (token == null) {

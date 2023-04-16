@@ -1,6 +1,6 @@
 package com.hexagonkt.realworld.messages
 
-import com.hexagonkt.core.requireKeys
+import com.hexagonkt.core.requirePath
 
 data class ProfileResponse(
     val username: String,
@@ -9,10 +9,10 @@ data class ProfileResponse(
     val following: Boolean
 ) {
     constructor(data: Map<*, *>) : this(
-        data.requireKeys("profile", ProfileResponse::username),
-        data.requireKeys("profile", ProfileResponse::bio),
-        data.requireKeys("profile", ProfileResponse::image),
-        data.requireKeys("profile", ProfileResponse::following),
+        data.requirePath("profile", ProfileResponse::username),
+        data.requirePath("profile", ProfileResponse::bio),
+        data.requirePath("profile", ProfileResponse::image),
+        data.requirePath("profile", ProfileResponse::following),
     )
 }
 
