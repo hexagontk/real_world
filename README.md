@@ -1,6 +1,5 @@
 
 # ![RealWorld Hexagon Implementation](logo.png)
-
 > Hexagon codebase containing real world examples (CRUD, auth, advanced patterns, etc) that
 > adheres to the [RealWorld] spec and API.
 
@@ -24,7 +23,6 @@ For more information on how to this works with other frontends/backends, head ov
 [Codecov]: https://codecov.io/gh/hexagonkt/real_world
 
 # How it works
-
 The project has a Gradle multi-module layout. Deployment code is located at the `deploy` folder.
 The goal is to code a full stack application providing a module for the back-end, the front-end
 (TBD) and the Mobile application (TBD).
@@ -39,7 +37,6 @@ See:
 * [mobile readme](mobile/README.md) (TBD)
 
 # Getting started
-
 The source code has the bare minimum formatting rules inside the `.editorconfig` file.
 
 Gradle is the tool used to automate build tasks locally.
@@ -83,23 +80,19 @@ Useful build commands:
 * Start application inside containers: `docker-compose up -d`
 
 # Testing
-
 The `HTTPie` and `jq` tools are used for testing the application manually in some scripts.
 
 Postman is also used to perform requests interactively: `backend/src/test/resources/postman/*`.
 
 # Continuous Integration
-
 The build pipeline is implemented using GitHub Actions, it takes care of checking the tests (including
 Postman collection tests) and the following tasks:
 
 ## Release
-
 Tagging of source code and container images should be done upon Pull Request merge on live branches.
 This is still to be implemented by the CI/CD pipeline using Travis.
 
 # TODO
-
 * Add npm to GitHub Actions cache
 * Publish in Docker Registry
 * Deploy on GCP
