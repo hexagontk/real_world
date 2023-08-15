@@ -4,12 +4,12 @@ import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.helpers.MultipleException
 import com.hexagonkt.core.fail
 import com.hexagonkt.core.media.APPLICATION_JSON
+import com.hexagonkt.http.handlers.FilterHandler
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.HttpStatus
 import com.hexagonkt.http.server.callbacks.CorsCallback
 import com.hexagonkt.http.server.callbacks.LoggingCallback
 import com.hexagonkt.http.handlers.HttpContext
-import com.hexagonkt.http.handlers.filter
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.jwt
 import com.hexagonkt.realworld.messages.ErrorResponse
@@ -37,8 +37,8 @@ internal val router by lazy {
         path("/articles", articlesRouter)
         path("/tags", tagsRouter)
 
-        exception(MultipleException::class) { multipleExceptionHandler(exception ?: fail) }
         exception(Exception::class) { exceptionHandler(exception ?: fail) }
+        exception<MultipleException>(clear = false) { multipleExceptionHandler(exception ?: fail) }
     }
 }
 
@@ -65,7 +65,7 @@ internal fun HttpContext.exceptionHandler(error: Exception): HttpContext {
     return internalServerError(errorResponseRoot.serialize(APPLICATION_JSON), contentType = contentType)
 }
 
-val authenticator = filter("*") {
+val authenticator = FilterHandler("*") {
     val principal = parsePrincipal(jwt)
 
     if (principal == null) next()

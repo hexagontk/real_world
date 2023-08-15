@@ -182,8 +182,8 @@ internal fun HttpContext.searchArticles(
 
     val sort = mapOf(Article::createdAt.name to false)
     val queryParameters = request.queryParameters
-    val limit = queryParameters["limit"]?.value?.toInt() ?: 20
-    val offset = queryParameters["offset"]?.value?.toInt() ?: 0
+    val limit = queryParameters["limit"]?.string()?.toInt() ?: 20
+    val offset = queryParameters["offset"]?.string()?.toInt() ?: 0
     val allArticles = articles.findMany(filter, limit, offset, sort)
     val userNames = allArticles.map { it.author } + subject
     val authors = users.findMany(mapOf(User::username.name to userNames))
