@@ -5,21 +5,16 @@ on:
 
 jobs:
   main:
-    name: Main
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - name: Install Java
-        uses: graalvm/setup-graalvm@v1
+      - uses: graalvm/setup-graalvm@v1
         with:
           version: latest
           distribution: graalvm-community
-          java-version: 17
+          java-version: 21
           cache: gradle
-      - name: Build & Test
-        run: .github/pre-push.sh
+      - run: .github/pre-push.sh

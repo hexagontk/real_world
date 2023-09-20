@@ -20,6 +20,7 @@ dependencies {
     val hexagonExtraVersion = properties["hexagonExtraVersion"]
     val javaJwtVersion = properties["javaJwtVersion"]
     val testcontainersVersion = properties["testcontainersVersion"]
+    val mockkVersion = properties["mockkVersion"]
 
     "implementation"("com.hexagonkt:serialization_jackson_json:$hexagonVersion")
     "implementation"("com.hexagonkt:http_server_jetty:$hexagonVersion")
@@ -32,4 +33,7 @@ dependencies {
 
     "testImplementation"("com.hexagonkt:http_client_jetty:$hexagonVersion")
     "testImplementation"("org.testcontainers:mongodb:$testcontainersVersion")
+    "testImplementation"("io.mockk:mockk:$mockkVersion") {
+        exclude(group = "org.jetbrains.kotlin")
+    }
 }
