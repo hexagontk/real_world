@@ -1,8 +1,8 @@
 
 plugins {
-    kotlin("jvm") version("1.9.10") apply(false)
+    kotlin("jvm") version("1.9.21") apply(false)
 
-    id("org.graalvm.buildtools.native") version("0.9.27") apply(false)
+    id("org.graalvm.buildtools.native") version("0.9.28") apply(false)
 }
 
 defaultTasks("build")

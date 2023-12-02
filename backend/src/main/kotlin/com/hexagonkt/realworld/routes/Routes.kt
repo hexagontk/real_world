@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.routes
 
 import com.auth0.jwt.interfaces.DecodedJWT
-import com.hexagonkt.helpers.MultipleException
+import com.hexagonkt.core.MultipleException
 import com.hexagonkt.core.fail
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.handlers.FilterHandler

@@ -4,7 +4,7 @@ import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requirePath
-import com.hexagonkt.helpers.withZone
+import com.hexagonkt.core.withZone
 import com.hexagonkt.http.handlers.HttpContext
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.*
