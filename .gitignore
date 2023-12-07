@@ -3,6 +3,9 @@
 private_*
 local_*
 
+# Binaries
+*.out
+
 # Maven
 target/
 pom.xml.*
@@ -40,7 +43,9 @@ hs_err_pid*
 # Other Tools
 kotlin-js-store/
 node_modules/
+.vagrant/
 .env
+.sdkmanrc
 
 # System Files
 .DS_Store

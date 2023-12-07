@@ -2,7 +2,7 @@
 services:
 
   mongodb:
-    image: docker.io/mongo:6.0-jammy
+    image: docker.io/mongo:7-jammy
     ports:
       - "3010:27017"
 

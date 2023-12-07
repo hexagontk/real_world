@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
     kotlin("jvm") version("1.9.21") apply(false)
@@ -16,4 +17,9 @@ task("clean", type = Delete::class) {
         fileTree(rootDir) { include("**/.attach_pid*") },
         fileTree(rootDir) { include("**/hs_err_pid*") }
     )
+}
+
+tasks.wrapper {
+    gradleVersion = "8.5"
+    distributionType = ALL
 }
