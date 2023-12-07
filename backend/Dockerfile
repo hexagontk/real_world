@@ -1,6 +1,6 @@
 
 FROM eclipse-temurin:21-jre-alpine
-LABEL description="realworld API"
+LABEL description="Realworld API"
 
 # Project setup
 ENV PROJECT backend
