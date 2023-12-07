@@ -9,8 +9,8 @@ import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.messages.PutArticleRequest
 import com.hexagonkt.realworld.server
-import com.hexagonkt.realworld.services.Article
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.Article
+import com.hexagonkt.realworld.domain.model.User
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test

@@ -9,8 +9,8 @@ import com.hexagonkt.realworld.articles
 import com.hexagonkt.realworld.jwt
 import com.hexagonkt.realworld.messages.*
 import com.hexagonkt.rest.bodyMap
-import com.hexagonkt.realworld.services.Article
-import com.hexagonkt.realworld.services.Comment
+import com.hexagonkt.realworld.domain.model.Article
+import com.hexagonkt.realworld.domain.model.Comment
 import com.hexagonkt.serialization.serialize
 
 internal val commentsRouter = path {

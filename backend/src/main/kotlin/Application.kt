@@ -10,9 +10,9 @@ import com.hexagonkt.http.server.*
 import com.hexagonkt.http.server.jetty.JettyServletAdapter
 import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
 import com.hexagonkt.realworld.routes.*
-import com.hexagonkt.realworld.services.Article
-import com.hexagonkt.realworld.services.Comment
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.Article
+import com.hexagonkt.realworld.domain.model.Comment
+import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.serialization.SerializationManager
 import com.hexagonkt.serialization.jackson.json.Json
 import com.hexagonkt.store.Store

@@ -8,8 +8,8 @@ import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.*
 import com.hexagonkt.realworld.messages.*
 import com.hexagonkt.realworld.routes.contentType
-import com.hexagonkt.realworld.services.Article
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.Article
+import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
 import com.hexagonkt.serialization.serialize
 import java.time.ZonedDateTime

@@ -7,7 +7,7 @@ import com.hexagonkt.http.handlers.HttpContext
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.messages.ProfileResponse
 import com.hexagonkt.realworld.messages.ProfileResponseRoot
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.realworld.users
 import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store

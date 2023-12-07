@@ -1,8 +1,8 @@
 package com.hexagonkt.realworld.messages
 
 import com.hexagonkt.core.requirePath
-import com.hexagonkt.realworld.services.Comment
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.Comment
+import com.hexagonkt.realworld.domain.model.User
 
 data class CommentRequest(val body: String) {
 

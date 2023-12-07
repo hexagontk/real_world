@@ -1,8 +1,8 @@
 package com.hexagonkt.realworld.messages
 
 import com.hexagonkt.core.*
-import com.hexagonkt.realworld.services.Article
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.Article
+import com.hexagonkt.realworld.domain.model.User
 
 data class ArticleRequest(
     val title: String,

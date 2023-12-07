@@ -2,7 +2,7 @@ package com.hexagonkt.realworld.messages
 
 import com.hexagonkt.core.requireString
 import com.hexagonkt.core.withZone
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.User
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME

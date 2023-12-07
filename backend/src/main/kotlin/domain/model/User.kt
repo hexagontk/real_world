@@ -1,4 +1,4 @@
-package com.hexagonkt.realworld.services
+package com.hexagonkt.realworld.domain.model
 
 import java.net.URL
 

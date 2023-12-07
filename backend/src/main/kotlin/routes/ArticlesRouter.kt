@@ -12,8 +12,8 @@ import com.hexagonkt.realworld.articles
 import com.hexagonkt.realworld.jwt
 import com.hexagonkt.realworld.messages.*
 import com.hexagonkt.realworld.Jwt
-import com.hexagonkt.realworld.services.Article
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.Article
+import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
 import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store

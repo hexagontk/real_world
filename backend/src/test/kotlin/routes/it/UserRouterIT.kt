@@ -12,7 +12,7 @@ import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.messages.ErrorResponse
 import com.hexagonkt.realworld.messages.PutUserRequest
 import com.hexagonkt.realworld.server
-import com.hexagonkt.realworld.services.User
+import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
