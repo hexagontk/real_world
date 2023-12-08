@@ -1,11 +1,11 @@
-package com.hexagonkt.realworld.routes
+package com.hexagonkt.realworld.rest
 
+import com.hexagonkt.core.urlOf
 import com.hexagonkt.realworld.createJwt
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.store.Store
 import io.mockk.mockk
-import java.net.URL
 
 class ArticlesRouterTest {
 
@@ -14,7 +14,7 @@ class ArticlesRouterTest {
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = URL("https://i.pravatar.cc/150?img=3")
+        image = urlOf("https://i.pravatar.cc/150?img=3")
     )
 
     private val jane = User(
@@ -22,7 +22,7 @@ class ArticlesRouterTest {
         email = "jane@jane.jane",
         password = "janejane",
         bio = "I own MegaCloud",
-        image = URL("https://i.pravatar.cc/150?img=1")
+        image = urlOf("https://i.pravatar.cc/150?img=1")
     )
 
     private val trainDragon = Article(

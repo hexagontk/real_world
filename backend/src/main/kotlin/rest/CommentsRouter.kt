@@ -1,4 +1,4 @@
-package com.hexagonkt.realworld.routes
+package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
@@ -7,10 +7,12 @@ import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.*
 import com.hexagonkt.realworld.articles
 import com.hexagonkt.realworld.jwt
-import com.hexagonkt.realworld.messages.*
 import com.hexagonkt.rest.bodyMap
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.Comment
+import com.hexagonkt.realworld.rest.messages.CommentRequest
+import com.hexagonkt.realworld.rest.messages.CommentResponse
+import com.hexagonkt.realworld.rest.messages.OkResponse
 import com.hexagonkt.serialization.serialize
 
 internal val commentsRouter = path {

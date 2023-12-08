@@ -1,13 +1,14 @@
-package com.hexagonkt.realworld.routes.it
+package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.core.media.APPLICATION_JSON
+import com.hexagonkt.core.urlOf
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.main
-import com.hexagonkt.realworld.messages.PutArticleRequest
+import com.hexagonkt.realworld.rest.messages.PutArticleRequest
 import com.hexagonkt.realworld.server
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
-import java.net.URL
 
 // TODO Add test to check articles' tags order
 @TestInstance(PER_CLASS)
@@ -27,7 +27,7 @@ class ArticlesIT {
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = URL("https://i.pravatar.cc/150?img=3")
+        image = urlOf("https://i.pravatar.cc/150?img=3")
     )
 
     private val jane = User(
@@ -35,7 +35,7 @@ class ArticlesIT {
         email = "jane@jane.jane",
         password = "janejane",
         bio = "I own MegaCloud",
-        image = URL("https://i.pravatar.cc/150?img=1")
+        image = urlOf("https://i.pravatar.cc/150?img=1")
     )
 
     private val trainDragon = Article(
@@ -67,7 +67,7 @@ class ArticlesIT {
     }
 
     @Test fun `Delete, create update and get an article`() {
-        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val endpoint = urlOf("http://localhost:${server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = endpoint, contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 
@@ -81,7 +81,7 @@ class ArticlesIT {
     }
 
     @Test fun `Favorite and un-favorite articles`() {
-        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val endpoint = urlOf("http://localhost:${server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = endpoint, contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
         val user = jake.username
@@ -110,7 +110,7 @@ class ArticlesIT {
     }
 
     @Test fun `Find articles filters correctly`() {
-        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val endpoint = urlOf("http://localhost:${server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = endpoint, contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 
@@ -148,7 +148,7 @@ class ArticlesIT {
     }
 
     @Test fun `Get user feed`() {
-        val endpoint = URL("http://localhost:${server.runtimePort}/api")
+        val endpoint = urlOf("http://localhost:${server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = endpoint, contentType = ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 

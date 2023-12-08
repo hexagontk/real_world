@@ -1,4 +1,4 @@
-package com.hexagonkt.realworld.routes
+package com.hexagonkt.realworld.rest
 
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.MultipleException
@@ -12,8 +12,8 @@ import com.hexagonkt.http.server.callbacks.LoggingCallback
 import com.hexagonkt.http.handlers.HttpContext
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.jwt
-import com.hexagonkt.realworld.messages.ErrorResponse
-import com.hexagonkt.realworld.messages.ErrorResponseRoot
+import com.hexagonkt.realworld.rest.messages.ErrorResponse
+import com.hexagonkt.realworld.rest.messages.ErrorResponseRoot
 import com.hexagonkt.realworld.Jwt
 import com.hexagonkt.serialization.serialize
 import kotlin.text.Charsets.UTF_8

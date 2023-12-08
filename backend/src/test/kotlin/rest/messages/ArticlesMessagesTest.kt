@@ -1,4 +1,4 @@
-package com.hexagonkt.realworld.messages
+package com.hexagonkt.realworld.rest.messages
 
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.Comment

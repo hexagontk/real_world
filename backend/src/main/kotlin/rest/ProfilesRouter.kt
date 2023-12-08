@@ -1,12 +1,12 @@
-package com.hexagonkt.realworld.routes
+package com.hexagonkt.realworld.rest
 
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.http.handlers.HttpContext
 import com.hexagonkt.http.handlers.path
-import com.hexagonkt.realworld.messages.ProfileResponse
-import com.hexagonkt.realworld.messages.ProfileResponseRoot
+import com.hexagonkt.realworld.rest.messages.ProfileResponse
+import com.hexagonkt.realworld.rest.messages.ProfileResponseRoot
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.realworld.users
 import com.hexagonkt.serialization.serialize

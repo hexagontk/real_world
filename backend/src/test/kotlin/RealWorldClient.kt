@@ -6,8 +6,8 @@ import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.*
-import com.hexagonkt.realworld.messages.*
-import com.hexagonkt.realworld.routes.contentType
+import com.hexagonkt.realworld.rest.messages.*
+import com.hexagonkt.realworld.rest.contentType
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap

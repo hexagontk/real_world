@@ -1,12 +1,12 @@
-package com.hexagonkt.realworld.routes
+package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.handlers.HttpContext
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.jwt
-import com.hexagonkt.realworld.messages.PutUserRequest
-import com.hexagonkt.realworld.messages.UserResponseRoot
+import com.hexagonkt.realworld.rest.messages.PutUserRequest
+import com.hexagonkt.realworld.rest.messages.UserResponseRoot
 import com.hexagonkt.realworld.Jwt
 import com.hexagonkt.rest.bodyMap
 import com.hexagonkt.realworld.domain.model.User

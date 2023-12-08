@@ -1,9 +1,9 @@
-package com.hexagonkt.realworld.routes
+package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.createArticleStore
-import com.hexagonkt.realworld.messages.TagsResponseRoot
+import com.hexagonkt.realworld.rest.messages.TagsResponseRoot
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store

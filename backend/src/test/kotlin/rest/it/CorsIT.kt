@@ -1,6 +1,7 @@
-package com.hexagonkt.realworld.routes.it
+package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.core.media.APPLICATION_JSON
+import com.hexagonkt.core.urlOf
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.net.URL
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -33,7 +33,7 @@ class CorsIT {
 
     @Test
     fun `OPTIONS returns correct CORS headers`() {
-        val baseUrl = URL("http://localhost:${server.runtimePort}/api")
+        val baseUrl = urlOf("http://localhost:${server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = baseUrl, contentType = ContentType(APPLICATION_JSON))
         val client = HttpClient(JettyClientAdapter(), settings)
         client.start()

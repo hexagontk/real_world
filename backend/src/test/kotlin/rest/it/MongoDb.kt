@@ -1,4 +1,4 @@
-package com.hexagonkt.realworld.routes.it
+package com.hexagonkt.realworld.rest.it
 
 import org.testcontainers.containers.MongoDBContainer
 

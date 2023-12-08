@@ -9,7 +9,7 @@ import com.hexagonkt.core.logging.LoggingManager
 import com.hexagonkt.http.server.*
 import com.hexagonkt.http.server.jetty.JettyServletAdapter
 import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
-import com.hexagonkt.realworld.routes.*
+import com.hexagonkt.realworld.rest.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.Comment
 import com.hexagonkt.realworld.domain.model.User
@@ -19,7 +19,6 @@ import com.hexagonkt.store.Store
 import com.hexagonkt.store.mongodb.MongoDbStore
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
-import java.net.URL
 
 internal val bindAddress = systemSettingOrNull("bindAddress") ?: LOOPBACK_INTERFACE
 internal val bindPort = systemSettingOrNull("bindPort") ?: 2010
@@ -35,7 +34,7 @@ internal fun createJwt(): Jwt {
     val keyStorePassword = systemSettingOrNull("keyStorePassword") ?: "storepass"
     val keyPairAlias = systemSettingOrNull("keyPairAlias") ?: "realWorld"
 
-    return Jwt(URL(keyStoreResource), keyStorePassword, keyPairAlias)
+    return Jwt(urlOf(keyStoreResource), keyStorePassword, keyPairAlias)
 }
 
 internal fun createUserStore(): Store<User, String> {
@@ -61,7 +60,7 @@ internal fun createUserStore(): Store<User, String> {
             email = it.requireString(User::email),
             password = it.requireString(User::password),
             bio = it.getString(User::bio),
-            image = it.getString(User::image)?.let(::URL),
+            image = it.getString(User::image)?.let(::urlOf),
             following = it.getStringsOrEmpty(User::following).toSet(),
         )
     }
@@ -126,12 +125,7 @@ internal fun createArticleStore(): Store<Article, String> {
     return articleStore
 }
 
-private fun setUp() {
+internal fun setUp() {
     LoggingManager.adapter = Slf4jJulLoggingAdapter()
     SerializationManager.defaultFormat = Json
-}
-
-internal fun main() {
-    setUp()
-    server.start()
 }
