@@ -8,7 +8,7 @@ apply(from = "${properties["gradleScripts"]}/kotlin.gradle")
 apply(from = "${properties["gradleScripts"]}/application.gradle")
 
 extensions.configure<JavaApplication> {
-    mainClass.set("com.hexagonkt.realworld.ApplicationKt")
+    mainClass.set("com.hexagonkt.realworld.MainKt")
 }
 
 tasks.named("assemble") {
