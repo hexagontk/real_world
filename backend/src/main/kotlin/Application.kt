@@ -1,7 +1,6 @@
 package com.hexagonkt.realworld
 
 import com.hexagonkt.core.*
-import com.hexagonkt.core.Jvm.systemSetting
 import com.hexagonkt.core.Jvm.systemSettingOrNull
 import com.hexagonkt.converters.ConvertersManager
 import com.hexagonkt.converters.convert
@@ -38,7 +37,7 @@ internal fun createJwt(): Jwt {
 }
 
 internal fun createUserStore(): Store<User, String> {
-    val mongodbUrl = systemSetting<String>("mongodbUrl")
+    val mongodbUrl = systemSettingOrNull<String>("mongodbUrl") ?: "mongodb://localhost:3010/real_world"
     val userStore = MongoDbStore(User::class, User::username, mongodbUrl)
     val indexField = User::email.name
     val indexOptions = IndexOptions().unique(true).background(true).name(indexField)
@@ -69,7 +68,7 @@ internal fun createUserStore(): Store<User, String> {
 }
 
 internal fun createArticleStore(): Store<Article, String> {
-    val mongodbUrl = systemSetting<String>("mongodbUrl")
+    val mongodbUrl = systemSettingOrNull<String>("mongodbUrl") ?: "mongodb://localhost:3010/real_world"
     val articleStore = MongoDbStore(Article::class, Article::slug, mongodbUrl)
     val indexField = Article::author.name
     val indexOptions = IndexOptions().unique(false).background(true).name(indexField)
