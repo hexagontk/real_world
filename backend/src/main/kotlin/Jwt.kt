@@ -6,6 +6,7 @@ import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.security.getPrivateKey
 import com.hexagonkt.core.security.getPublicKey
 import com.hexagonkt.core.security.loadKeyStore
+import com.hexagonkt.http.handlers.HttpContext
 import java.net.URL
 
 class Jwt(keyStoreResource: URL, password: String, private val alias: String) {
@@ -20,4 +21,7 @@ class Jwt(keyStoreResource: URL, password: String, private val alias: String) {
 
     fun verify(token: String): DecodedJWT =
         verifier.verify(token)
+
+    fun parsePrincipal(context: HttpContext): DecodedJWT? =
+        context.request.authorization?.let { verify(it.value) }
 }

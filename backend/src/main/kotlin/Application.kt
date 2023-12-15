@@ -1,130 +1,51 @@
 package com.hexagonkt.realworld
 
-import com.hexagonkt.core.*
-import com.hexagonkt.core.Jvm.systemSettingOrNull
-import com.hexagonkt.converters.ConvertersManager
-import com.hexagonkt.converters.convert
 import com.hexagonkt.core.logging.LoggingManager
+import com.hexagonkt.core.media.APPLICATION_JSON
+import com.hexagonkt.http.handlers.FilterHandler
+import com.hexagonkt.http.handlers.HttpHandler
+import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.server.*
 import com.hexagonkt.http.server.jetty.JettyServletAdapter
 import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
 import com.hexagonkt.realworld.rest.*
 import com.hexagonkt.realworld.domain.model.Article
-import com.hexagonkt.realworld.domain.model.Comment
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.serialization.SerializationManager
 import com.hexagonkt.serialization.jackson.json.Json
 import com.hexagonkt.store.Store
-import com.hexagonkt.store.mongodb.MongoDbStore
-import com.mongodb.client.model.IndexOptions
-import com.mongodb.client.model.Indexes
 
-internal val bindAddress = systemSettingOrNull("bindAddress") ?: LOOPBACK_INTERFACE
-internal val bindPort = systemSettingOrNull("bindPort") ?: 2010
-internal val serverSettings = HttpServerSettings(bindAddress, bindPort, "/api")
-internal val serverAdapter = JettyServletAdapter()
-internal val server: HttpServer by lazy { HttpServer(serverAdapter, router, serverSettings) }
-internal val jwt: Jwt by lazy { createJwt() }
-internal val users: Store<User, String> by lazy { createUserStore() }
-internal val articles: Store<Article, String> by lazy { createArticleStore() }
+data class Application(
+    private val settings: Settings = Settings(),
+    private val jwt: Jwt,
+    private val users: Store<User, String>,
+    private val articles: Store<Article, String>,
+    private val contentType: ContentType = ContentType(APPLICATION_JSON, charset = Charsets.UTF_8)
+) {
+    private val authenticator = FilterHandler("*") {
+        val principal = jwt.parsePrincipal(this)
 
-internal fun createJwt(): Jwt {
-    val keyStoreResource = systemSettingOrNull("keyStoreResource") ?: "classpath:keystore.p12"
-    val keyStorePassword = systemSettingOrNull("keyStorePassword") ?: "storepass"
-    val keyPairAlias = systemSettingOrNull("keyPairAlias") ?: "realWorld"
-
-    return Jwt(urlOf(keyStoreResource), keyStorePassword, keyPairAlias)
-}
-
-internal fun createUserStore(): Store<User, String> {
-    val mongodbUrl = systemSettingOrNull<String>("mongodbUrl") ?: "mongodb://localhost:3010/real_world"
-    val userStore = MongoDbStore(User::class, User::username, mongodbUrl)
-    val indexField = User::email.name
-    val indexOptions = IndexOptions().unique(true).background(true).name(indexField)
-    userStore.collection.createIndex(Indexes.ascending(indexField), indexOptions)
-
-    ConvertersManager.register(User::class to Map::class) {
-        fieldsMapOfNotNull(
-            User::username to it.username,
-            User::email to it.email,
-            User::password to it.password,
-            User::bio to it.bio,
-            User::image to it.image,
-            User::following to it.following,
-        )
-    }
-    ConvertersManager.register(Map::class to User::class) {
-        User(
-            username = it.requireString(User::username),
-            email = it.requireString(User::email),
-            password = it.requireString(User::password),
-            bio = it.getString(User::bio),
-            image = it.getString(User::image)?.let(::urlOf),
-            following = it.getStringsOrEmpty(User::following).toSet(),
-        )
+        if (principal == null) next()
+        else send(attributes = attributes + ("principal" to principal)).next()
     }
 
-    return userStore
-}
+    private val serverSettings = HttpServerSettings(settings.bindAddress, settings.bindPort, "/api")
+    private val serverAdapter = JettyServletAdapter()
+    private val userRouter = UserRouter(jwt, users, contentType, authenticator).userRouter
+    private val usersRouter = UsersRouter(jwt, users, contentType).usersRouter
+    private val profilesRouter = ProfilesRouter(users, contentType, authenticator).profilesRouter
+    private val commentsRouter = CommentsRouter(jwt, users, articles, contentType).commentsRouter
+    private val articlesRouter = ArticlesRouter(jwt, users, articles, contentType, authenticator, commentsRouter).articlesRouter
+    private val tagsRouter = TagsRouter(articles, contentType).tagsRouter
+    private val router: HttpHandler by lazy { Routes(jwt, articles, userRouter, usersRouter, profilesRouter, articlesRouter, tagsRouter).router }
+    internal val server: HttpServer by lazy { HttpServer(serverAdapter, router, serverSettings) }
 
-internal fun createArticleStore(): Store<Article, String> {
-    val mongodbUrl = systemSettingOrNull<String>("mongodbUrl") ?: "mongodb://localhost:3010/real_world"
-    val articleStore = MongoDbStore(Article::class, Article::slug, mongodbUrl)
-    val indexField = Article::author.name
-    val indexOptions = IndexOptions().unique(false).background(true).name(indexField)
-    articleStore.collection.createIndex(Indexes.ascending(indexField), indexOptions)
-
-    ConvertersManager.register(Comment::class to Map::class) {
-        fieldsMapOfNotNull(
-            Comment::id to it.id,
-            Comment::author to it.author,
-            Comment::body to it.body,
-            Comment::createdAt to it.createdAt,
-            Comment::updatedAt to it.updatedAt,
-        )
-    }
-    ConvertersManager.register(Map::class to Comment::class) {
-        Comment(
-            id = it.requireInt(Comment::id),
-            author = it.requireString(Comment::author),
-            body = it.requireString(Comment::body),
-            createdAt = it.requireKey(Comment::createdAt),
-            updatedAt = it.requireKey(Comment::updatedAt),
-        )
-    }
-    ConvertersManager.register(Article::class to Map::class) {
-        fieldsMapOfNotNull(
-            Article::slug to it.slug,
-            Article::author to it.author,
-            Article::title to it.title,
-            Article::description to it.description,
-            Article::body to it.body,
-            Article::tagList to it.tagList,
-            Article::createdAt to it.createdAt,
-            Article::updatedAt to it.updatedAt,
-            Article::favoritedBy to it.favoritedBy,
-            Article::comments to it.comments.map { m -> m.convert(Map::class) },
-        )
-    }
-    ConvertersManager.register(Map::class to Article::class) {
-        Article(
-            slug = it.requireString(Article::slug),
-            author = it.requireString(Article::author),
-            title = it.requireString(Article::title),
-            description = it.requireString(Article::description),
-            body = it.requireString(Article::body),
-            tagList = it.getStringsOrEmpty(Article::tagList).let(::LinkedHashSet),
-            createdAt = it.requireKey(Comment::createdAt),
-            updatedAt = it.requireKey(Comment::updatedAt),
-            favoritedBy = it.getStringsOrEmpty(Article::favoritedBy).toSet(),
-            comments = it.getMapsOrEmpty(Article::comments).map { m -> m.convert(Comment::class) },
-        )
+    init {
+        LoggingManager.adapter = Slf4jJulLoggingAdapter()
+        SerializationManager.defaultFormat = Json
     }
 
-    return articleStore
-}
-
-internal fun setUp() {
-    LoggingManager.adapter = Slf4jJulLoggingAdapter()
-    SerializationManager.defaultFormat = Json
+    fun start() {
+        server.start()
+    }
 }

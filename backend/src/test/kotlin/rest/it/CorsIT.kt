@@ -8,8 +8,8 @@ import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.Header
 import com.hexagonkt.http.model.Headers
+import com.hexagonkt.realworld.application
 import com.hexagonkt.realworld.main
-import com.hexagonkt.realworld.server
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -28,12 +28,12 @@ class CorsIT {
 
     @AfterAll
     fun shutdown() {
-        server.stop()
+        application.server.stop()
     }
 
     @Test
     fun `OPTIONS returns correct CORS headers`() {
-        val baseUrl = urlOf("http://localhost:${server.runtimePort}/api")
+        val baseUrl = urlOf("http://localhost:${application.server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = baseUrl, contentType = ContentType(APPLICATION_JSON))
         val client = HttpClient(JettyClientAdapter(), settings)
         client.start()

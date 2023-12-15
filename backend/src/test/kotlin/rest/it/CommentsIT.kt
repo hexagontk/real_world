@@ -7,9 +7,9 @@ import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.RealWorldClient
+import com.hexagonkt.realworld.application
 import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.rest.messages.CommentRequest
-import com.hexagonkt.realworld.server
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import org.junit.jupiter.api.AfterAll
@@ -45,11 +45,11 @@ class CommentsIT {
     }
 
     @AfterAll fun shutdown() {
-        server.stop()
+        application.server.stop()
     }
 
     @Test fun `Delete, create and get article's comments`() {
-        val endpoint = urlOf("http://localhost:${server.runtimePort}/api")
+        val endpoint = urlOf("http://localhost:${application.server.runtimePort}/api")
         val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 
@@ -64,7 +64,7 @@ class CommentsIT {
     }
 
     @Test fun `Get article's comments without login`() {
-        val endpoint = urlOf("http://localhost:${server.runtimePort}/api")
+        val endpoint = urlOf("http://localhost:${application.server.runtimePort}/api")
         val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 

@@ -10,9 +10,9 @@ import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.INTERNAL_SERVER_ERROR_500
 import com.hexagonkt.realworld.RealWorldClient
+import com.hexagonkt.realworld.application
 import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
-import com.hexagonkt.realworld.server
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
 import org.junit.jupiter.api.AfterAll
@@ -49,11 +49,11 @@ class UsersRouterIT {
     }
 
     @AfterAll fun shutdown() {
-        server.stop()
+        application.server.stop()
     }
 
     @Test fun `Delete, login and register users`() {
-        val endpoint = urlOf("http://localhost:${port ?: server.runtimePort}/api")
+        val endpoint = urlOf("http://localhost:${port ?: application.server.runtimePort}/api")
         val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
         val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
 

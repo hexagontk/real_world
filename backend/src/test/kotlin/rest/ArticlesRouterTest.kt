@@ -1,6 +1,7 @@
 package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.urlOf
+import com.hexagonkt.realworld.Settings
 import com.hexagonkt.realworld.createJwt
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
@@ -36,7 +37,7 @@ class ArticlesRouterTest {
 
     private val userStore = mockk<Store<User, String>>()
     private val articleStore = mockk<Store<Article, String>>()
-    private val jwt = createJwt()
+    private val jwt = createJwt(Settings())
     private val token = jwt.sign(jake.username)
     private val principal = jwt.verify(token)
 

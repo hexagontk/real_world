@@ -7,7 +7,6 @@ import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.*
 import com.hexagonkt.realworld.rest.messages.*
-import com.hexagonkt.realworld.rest.contentType
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
@@ -55,7 +54,7 @@ internal class RealWorldClient(val client: HttpClient) {
     fun loginUser(user: User): RealWorldClient {
         val header = client.post("/users/login", mapOf("user" to user.toLoginRequest()).serialize(APPLICATION_JSON)).let {
             assertEquals(OK_200, it.status)
-            assertEquals(contentType, it.contentType)
+            assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), it.contentType)
 
             val userResponse = UserResponse(it.bodyMap().requirePath("user"))
             assertEquals(user.username, userResponse.username)
