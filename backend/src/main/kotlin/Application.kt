@@ -37,7 +37,7 @@ data class Application(
     private val commentsRouter = CommentsRouter(jwt, users, articles, contentType).commentsRouter
     private val articlesRouter = ArticlesRouter(jwt, users, articles, contentType, authenticator, commentsRouter).articlesRouter
     private val tagsRouter = TagsRouter(articles, contentType).tagsRouter
-    private val router: HttpHandler by lazy { Routes(jwt, articles, userRouter, usersRouter, profilesRouter, articlesRouter, tagsRouter).router }
+    private val router: HttpHandler by lazy { Routes(userRouter, usersRouter, profilesRouter, articlesRouter, tagsRouter).router }
     internal val server: HttpServer by lazy { HttpServer(serverAdapter, router, serverSettings) }
 
     init {

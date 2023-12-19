@@ -12,15 +12,10 @@ import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.rest.messages.ErrorResponseRoot
-import com.hexagonkt.realworld.Jwt
-import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.serialization.serialize
-import com.hexagonkt.store.Store
 import kotlin.text.Charsets.UTF_8
 
 internal data class Routes(
-    private val jwt: Jwt,
-    private val articles: Store<Article, String>,
     private val userRouter: HttpHandler,
     private val usersRouter: HttpHandler,
     private val profilesRouter: HttpHandler,
