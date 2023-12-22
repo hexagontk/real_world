@@ -31,7 +31,6 @@ dependencies {
 
     "testImplementation"("com.hexagonkt:http_client_jetty:$hexagonVersion")
     "testImplementation"("org.testcontainers:mongodb:$testcontainersVersion")
-    "testImplementation"("org.testcontainers:postgresql:$testcontainersVersion")
     "testImplementation"("io.mockk:mockk:$mockkVersion") {
         exclude(group = "org.jetbrains.kotlin")
     }

@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
-    kotlin("jvm") version("1.9.21") apply(false)
+    kotlin("jvm") version("1.9.22") apply(false)
 
     id("org.graalvm.buildtools.native") version("0.9.28") apply(false)
 }
