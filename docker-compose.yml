@@ -1,4 +1,6 @@
 
+version: "3.9"
+
 services:
 
   mongodb:
@@ -19,3 +21,8 @@ services:
       context: backend
     ports:
       - "3090:2010"
+
+volumes:
+  mongodb:
+  mongodb-data:
+    driver: local
