@@ -1,6 +1,6 @@
 
 # ![RealWorld Hexagon Implementation](logo.png)
-> Hexagon codebase containing real world examples (CRUD, auth, advanced patterns, etc) that
+> Hexagon codebase containing real world examples (CRUD, auth, advanced patterns, etc.) that
 > adheres to the [RealWorld] spec and API.
 
 ### [Demo](https://github.com/gothinkster/realworld)
@@ -9,18 +9,14 @@
 This codebase was created to demonstrate a fully fledged fullstack application built with
 **Hexagon** including CRUD operations, authentication, routing, pagination, and more.
 
-We've gone to great lengths to adhere to the **Hexagon** community styleguides & best practices.
+We've gone to great lengths to adhere to the **Hexagon** community styleguide & best practices.
 
 For more information on how to this works with other frontends/backends, head over to the
 [RealWorld].
 
-[![Travis CI](https://travis-ci.org/hexagonkt/real_world.svg?branch=master)][Travis]
-[![Codecov](https://codecov.io/gh/hexagonkt/real_world/branch/master/graph/badge.svg)][Codecov]
+![GitHub CI](https://github.com/hexagonkt/real_world/actions/workflows/main.yml/badge.svg)
 
 [RealWorld]: https://github.com/gothinkster/realworld
-
-[Travis]: https://travis-ci.org/hexagonkt/real_world
-[Codecov]: https://codecov.io/gh/hexagonkt/real_world
 
 # How it works
 The project has a Gradle multi-module layout. Deployment code is located at the `deploy` folder.
@@ -80,13 +76,11 @@ Useful build commands:
 * Start application inside containers: `docker-compose up -d`
 
 # Testing
-The `HTTPie` and `jq` tools are used for testing the application manually in some scripts.
-
-Postman is also used to perform requests interactively: `backend/src/test/resources/postman/*`.
+Postman is used to perform requests interactively: `backend/src/test/resources/postman/*`.
 
 # Continuous Integration
-The build pipeline is implemented using GitHub Actions, it takes care of checking the tests (including
-Postman collection tests) and the following tasks:
+The build pipeline is implemented using GitHub Actions, it takes care of checking the tests (
+including Postman collection tests) and the following tasks:
 
 ## Release
 Tagging of source code and container images should be done upon Pull Request merge on live branches.
