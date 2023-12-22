@@ -14,11 +14,11 @@
 #
 # RUNTIME
 #
-FROM eclipse-temurin:21-jre-alpine
+FROM docker.io/eclipse-temurin:21-jre-alpine
 LABEL description="Realworld API"
-ARG PROJECT=backend
 
 # Project setup
+ENV PROJECT backend
 ENV TZ UTC
 
 EXPOSE 2010
