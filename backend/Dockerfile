@@ -1,9 +1,24 @@
+#
+# BUILD
+#
+#FROM docker.io/gradle:8.5-jdk21-graal-jammy as build
+#FROM container-registry.oracle.com/graalvm/native-image:21-muslib-ol9 as build
+#USER root
+#WORKDIR /build
 
-FROM eclipse-temurin:21-jre-alpine
+#ADD . .
+#RUN microdnf -y install findutils
+#RUN ./gradlew installDist
+#RUN ls /build
+
+#
+# RUNTIME
+#
+FROM docker.io/eclipse-temurin:21-jre-alpine
 LABEL description="Realworld API"
+ARG PROJECT=backend
 
 # Project setup
-ENV PROJECT backend
 ENV TZ UTC
 
 EXPOSE 2010
