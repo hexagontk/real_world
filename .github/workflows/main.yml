@@ -1,5 +1,5 @@
 
-name: GitHub CI
+name: GitHub Actions
 on:
   - push
   - pull_request

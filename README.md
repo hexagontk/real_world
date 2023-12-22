@@ -79,12 +79,12 @@ Useful build commands:
 Postman is used to perform requests interactively: `backend/src/test/resources/postman/*`.
 
 # Continuous Integration
-The build pipeline is implemented using GitHub Actions, it takes care of checking the tests (
-including Postman collection tests) and the following tasks:
+The build pipeline is implemented using GitHub Actions, it takes care of checking the tests
+(including Postman collection tests) and the following tasks:
 
 ## Release
 Tagging of source code and container images should be done upon Pull Request merge on live branches.
-This is still to be implemented by the CI/CD pipeline using Travis.
+This is still to be implemented by the CI/CD pipeline using GitHub Actions.
 
 # TODO
 * Publish in Docker Registry

@@ -50,7 +50,3 @@ node_modules/
 # System Files
 .DS_Store
 Thumbs.db
-
-# Testing
-package.json
-package-lock.json
