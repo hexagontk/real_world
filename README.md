@@ -93,7 +93,6 @@ Tagging of source code and container images should be done upon Pull Request mer
 This is still to be implemented by the CI/CD pipeline using Travis.
 
 # TODO
-* Add npm to GitHub Actions cache
 * Publish in Docker Registry
 * Deploy on K8s
 * Add requests' bodies validation returning as many errors as wrong fields
@@ -102,5 +101,3 @@ This is still to be implemented by the CI/CD pipeline using Travis.
 * Publish front end in GitHub pages
 * Migrate readme.md API documentation to Swagger
 * ArchUnit
-* Add build stage to Dockerfile
-* Add .dockerignore

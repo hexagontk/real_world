@@ -7,9 +7,9 @@
 
 set -e
 
-./gradlew clean build
 docker compose up -d --build --force-recreate
-sleep 3
+
+./gradlew clean build
 
 npm install newman
 

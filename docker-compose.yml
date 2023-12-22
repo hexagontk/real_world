@@ -18,7 +18,7 @@ services:
       bindAddress: 0.0.0.0
       mongodbUrl: mongodb://mongodb/real_world
     build:
-      context: backend
+      dockerfile: backend/Dockerfile
     ports:
       - "3090:2010"
 

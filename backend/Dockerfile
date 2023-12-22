@@ -1,15 +1,13 @@
 #
 # BUILD
 #
-#FROM docker.io/gradle:8.5-jdk21-graal-jammy as build
-#FROM container-registry.oracle.com/graalvm/native-image:21-muslib-ol9 as build
-#USER root
-#WORKDIR /build
+FROM container-registry.oracle.com/graalvm/native-image:21-muslib-ol9 as build
+USER root
+WORKDIR /build
 
-#ADD . .
-#RUN microdnf -y install findutils
-#RUN ./gradlew installDist
-#RUN ls /build
+ADD . .
+RUN microdnf -y install findutils
+RUN ./gradlew -x test installDist
 
 #
 # RUNTIME
@@ -29,8 +27,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Project install
 USER 1000
-ADD --chown=1000:1000 build/distributions/$PROJECT*.tar /opt
+COPY --from=build --chown=1000:1000 /build/$PROJECT/build/install/$PROJECT/ /opt/$PROJECT
 
 # Process execution
-WORKDIR /opt/$PROJECT*
-ENTRYPOINT /opt/$PROJECT*/bin/$PROJECT
+WORKDIR /opt/$PROJECT
+ENTRYPOINT /opt/$PROJECT/bin/$PROJECT
