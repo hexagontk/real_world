@@ -3,9 +3,12 @@
 > Hexagon codebase containing real world examples (CRUD, auth, advanced patterns, etc.) that
 > adheres to the [RealWorld] spec and API.
 
-### [Demo](https://github.com/gothinkster/realworld)
-### [RealWorld]
+![GitHub CI](https://github.com/hexagonkt/real_world/actions/workflows/main.yml/badge.svg)
 
+### [Demo](https://github.com/gothinkster/realworld)
+TODO Set working demo URL
+
+### [RealWorld]
 This codebase was created to demonstrate a fully fledged fullstack application built with
 **Hexagon** including CRUD operations, authentication, routing, pagination, and more.
 
@@ -14,16 +17,13 @@ We've gone to great lengths to adhere to the **Hexagon** community styleguide & 
 For more information on how to this works with other frontends/backends, head over to the
 [RealWorld].
 
-![GitHub CI](https://github.com/hexagonkt/real_world/actions/workflows/main.yml/badge.svg)
-
 [RealWorld]: https://github.com/gothinkster/realworld
 
 # How it works
-The project has a Gradle multi-module layout. Deployment code is located at the `deploy` folder.
-The goal is to code a full stack application providing a module for the back-end, the front-end
-(TBD) and the Mobile application (TBD).
+The project has a Gradle multi-module layout. The goal is to code a full stack application providing
+a module for the back-end, the front-end (TBD) and the Mobile application (TBD).
 
-Docker Compose is used to build images for each module (if applies) and publish them to the Docker
+Docker Compose is used to build images for each module (if applies) and push them to the Docker
 Registry.
 
 See:
@@ -37,8 +37,7 @@ The source code has the bare minimum formatting rules inside the `.editorconfig`
 
 Gradle is the tool used to automate build tasks locally.
 
-For image creation, Docker builds binaries (using Gradle) in a first stage. The outcome of this
-stage is used to create the application image (check `backend/Dockerfile` for more details).
+For image creation, `backend/Dockerfile` is used.
 
 Docker Compose is used to build all modules (from their `Dockerfile`) and run them inside
 containers.
@@ -55,25 +54,10 @@ Useful build commands:
 * Build: `./gradlew installDist`. Generates:
   - Application directory: `backend/build/install/backend`
   - Packaged application: `backend/build/distributions`
-  - Web application: `backend/build/libs/ROOT.war`
-  - Single JAR with dependencies: `backend/build/libs/<module>-all-<version>.jar`
-  - Application specifications: `backend/build/reports/cucumber`
-
 * Rebuild: `./gradlew clean installDist`
-
-* Documentation: `./gradlew doc`. Creates:
-  - API documentation: `backend/build/dokka/backend`
-  - Coverage report: `backend/build/reports/jacoco/test/html`
-
-* Generate everything (binaries and documentation): `./gradlew all`
-
 * Run: `./gradlew run`
-
-* Watch: `./gradlew --no-daemon --continuous runService`
-
-* Build local container images: `docker-compose build`
-
-* Start application inside containers: `docker-compose up -d`
+* Build local container images: `docker compose build`
+* Start application inside containers: `docker compose up -d`
 
 # Testing
 Postman is used to perform requests interactively: `backend/src/test/resources/postman/*`.
@@ -95,3 +79,4 @@ This is still to be implemented by the CI/CD pipeline using GitHub Actions.
 * Publish front end in GitHub pages
 * Migrate readme.md API documentation to Swagger
 * ArchUnit
+* Cucumber tests

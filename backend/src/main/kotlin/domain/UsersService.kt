@@ -18,15 +18,15 @@ data class UsersService(
     fun deleteUser(username: String): Boolean =
         users.deleteOne(username)
 
-    fun putUser(subject: String, updates: Map<String, *>): User? {
+    fun replaceUser(subject: String, updates: Map<String, *>): User? {
         val updated = users.updateOne(subject, updates)
 
         return if (updated)
-            getUser(subject)
+            searchUser(subject)
         else
             null
     }
 
-    fun getUser(subject: String): User? =
+    fun searchUser(subject: String): User? =
         users.findOne(subject)
 }

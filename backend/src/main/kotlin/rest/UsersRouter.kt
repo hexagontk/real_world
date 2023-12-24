@@ -17,50 +17,48 @@ internal data class UsersRouter(
     private val users: Store<User, String>,
     private val contentType: ContentType,
 ) {
-    internal val usersRouter by lazy {
-        path {
-            // TODO Authenticate and require 'root' user or owner
-            delete("/{username}") {
-                val username = pathParameters.require("username")
-                val deleteOne = users.deleteOne(username)
-                if (deleteOne)
-                    ok(
-                        OkResponse("$username deleted").serialize(APPLICATION_JSON),
-                        contentType = contentType
-                    )
-                else
-                    notFound("$username not found")
+    internal val usersRouter = path {
+        // TODO Authenticate and require 'root' user or owner
+        delete("/{username}") {
+            val username = pathParameters.require("username")
+            val deleteOne = users.deleteOne(username)
+            if (deleteOne)
+                ok(
+                    OkResponse("$username deleted").serialize(APPLICATION_JSON),
+                    contentType = contentType
+                )
+            else
+                notFound("$username not found")
+        }
+
+        post("/login") {
+            val bodyUser = LoginRequest(request.bodyMap().requirePath("user"))
+            val filter = mapOf(User::email.name to bodyUser.email)
+            val user = users.findOne(filter) ?: return@post notFound("Not Found")
+            if (user.password == bodyUser.password) {
+                val content =
+                    UserResponseRoot(user, jwt.sign(user.username)).serialize(APPLICATION_JSON)
+                ok(content, contentType = contentType)
+            } else {
+                unauthorized("Bad credentials")
             }
+        }
 
-            post("/login") {
-                val bodyUser = LoginRequest(request.bodyMap().requirePath("user"))
-                val filter = mapOf(User::email.name to bodyUser.email)
-                val user = users.findOne(filter) ?: return@post notFound("Not Found")
-                if (user.password == bodyUser.password) {
-                    val content =
-                        UserResponseRoot(user, jwt.sign(user.username)).serialize(APPLICATION_JSON)
-                    ok(content, contentType = contentType)
-                } else {
-                    unauthorized("Bad credentials")
-                }
-            }
+        post {
+            val user = RegistrationRequest(request.bodyMap().requirePath("user"))
 
-            post {
-                val user = RegistrationRequest(request.bodyMap().requirePath("user"))
+            val key = users.insertOne(User(user.username, user.email, user.password))
+            val content = UserResponseRoot(
+                UserResponse(
+                    email = user.email,
+                    username = key,
+                    bio = "",
+                    image = "",
+                    token = jwt.sign(key)
+                )
+            ).serialize(APPLICATION_JSON)
 
-                val key = users.insertOne(User(user.username, user.email, user.password))
-                val content = UserResponseRoot(
-                    UserResponse(
-                        email = user.email,
-                        username = key,
-                        bio = "",
-                        image = "",
-                        token = jwt.sign(key)
-                    )
-                ).serialize(APPLICATION_JSON)
-
-                created(content, contentType = contentType)
-            }
+            created(content, contentType = contentType)
         }
     }
 }

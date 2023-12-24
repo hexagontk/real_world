@@ -5,6 +5,8 @@ services:
 
   mongodb:
     image: docker.io/mongo:7-jammy
+    volumes:
+      - mongodb:/data/db
     ports:
       - "3010:27017"
 
@@ -17,6 +19,7 @@ services:
     environment:
       bindAddress: 0.0.0.0
       mongodbUrl: mongodb://mongodb/real_world
+#    image: TODO
     build:
       dockerfile: backend/Dockerfile
     ports:
@@ -24,5 +27,3 @@ services:
 
 volumes:
   mongodb:
-  mongodb-data:
-    driver: local
