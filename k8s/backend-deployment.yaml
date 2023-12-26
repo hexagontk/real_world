@@ -1,0 +1,50 @@
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  annotations:
+    app: realworld
+    kompose.cmd: kompose convert -f docker-compose.yml -o k8s
+    kompose.version: 1.31.0 (HEAD)
+    type: backend
+  labels:
+    io.kompose.service: backend
+  name: backend
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: backend
+  template:
+    metadata:
+      annotations:
+        app: realworld
+        kompose.cmd: kompose convert -f docker-compose.yml -o k8s
+        kompose.version: 1.31.0 (HEAD)
+        type: backend
+      labels:
+        io.kompose.network/real-world-default: "true"
+        io.kompose.service: backend
+    spec:
+      containers:
+        - env:
+            - name: bindAddress
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: bindAddress
+            - name: mongodbUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: mongodbUrl
+          image: backend
+          name: backend
+          ports:
+            - containerPort: 2010
+              hostPort: 3090
+              protocol: TCP
+          resources: {}
+      restartPolicy: Always

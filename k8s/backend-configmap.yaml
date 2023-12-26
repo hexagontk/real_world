@@ -1,0 +1,10 @@
+
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: backend-configmap
+
+data:
+  bindAddress: "0.0.0.0"
+  mongodbUrl: "mongodb://mongodb/real_world"
