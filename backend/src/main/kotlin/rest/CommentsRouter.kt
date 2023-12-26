@@ -24,8 +24,7 @@ internal data class CommentsRouter(
 ) {
     val commentsRouter = path {
         post {
-            val principal = jwt.parsePrincipal(this) ?: return@post unauthorized("Unauthorized")
-            val subject = principal.subject
+            val subject = jwt.parsePrincipal(this) ?: return@post unauthorized("Unauthorized")
             val slug = pathParameters.require(Article::slug.name)
             val article = articles.findOne(slug) ?: return@post notFound("$slug article not found")
             val author = users.findOne(article.author)
@@ -50,8 +49,7 @@ internal data class CommentsRouter(
         }
 
         get {
-            val principal = jwt.parsePrincipal(this)
-            val subject = principal?.subject
+            val subject = jwt.parsePrincipal(this)
             val slug = pathParameters.require(Article::slug.name)
             val article = articles.findOne(slug) ?: return@get notFound("$slug article not found")
             val author = users.findOne(article.author)

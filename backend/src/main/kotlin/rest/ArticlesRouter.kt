@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest
 
-import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requirePath
@@ -55,8 +54,7 @@ internal data class ArticlesRouter(
     fun HttpContext.findArticles(
         jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
 
-        val principal = jwt.parsePrincipal(this)
-        val subject = principal?.subject
+        val subject = jwt.parsePrincipal(this)
         val filter = queryParameters
             .mapKeys {
                 when (it.key) {
@@ -74,11 +72,11 @@ internal data class ArticlesRouter(
     private fun HttpContext.createArticle(
         jwt: Jwt, articles: Store<Article, String>
     ): HttpContext {
-        val principal = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
+        val subject = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
         val bodyArticle = ArticleRequest(request.bodyMap().requirePath("article"))
         val article = Article(
             slug = bodyArticle.title.toSlug(),
-            author = principal.subject,
+            author = subject,
             title = bodyArticle.title,
             description = bodyArticle.description,
             body = bodyArticle.body,
@@ -87,7 +85,7 @@ internal data class ArticlesRouter(
 
         articles.insertOne(article)
 
-        val articleCreationResponseRoot = ArticleCreationResponseRoot(article, principal.subject)
+        val articleCreationResponseRoot = ArticleCreationResponseRoot(article, subject)
         return ok(articleCreationResponseRoot.serialize(APPLICATION_JSON), contentType = contentType)
     }
 
@@ -95,16 +93,16 @@ internal data class ArticlesRouter(
         users: Store<User, String>, articles: Store<Article, String>, favorite: Boolean
     ): HttpContext {
 
-        val principal = attributes["principal"] as DecodedJWT
+        val subject = attributes["principal"] as String
         val slug = pathParameters.require("slug")
         val article = articles.findOne(slug) ?: return notFound()
         val author = checkNotNull(users.findOne(article.author))
-        val user = checkNotNull(users.findOne(principal.subject)) // Both can be fetched with one 'find'
+        val user = checkNotNull(users.findOne(subject)) // Both can be fetched with one 'find'
         val updatedAt = LocalDateTime.now()
         val pair = Article::updatedAt.name to updatedAt
         val favoritedBy =
-            if (favorite) article.favoritedBy + principal.subject
-            else article.favoritedBy - principal.subject
+            if (favorite) article.favoritedBy + subject
+            else article.favoritedBy - subject
         val updates = mapOf(Article::favoritedBy.name to favoritedBy)
 
         if (!articles.updateOne(slug, updates + pair))
@@ -120,16 +118,16 @@ internal data class ArticlesRouter(
     fun HttpContext.getArticle(
         jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
 
-        val principal = jwt.parsePrincipal(this)
+        val subject = jwt.parsePrincipal(this)
         val article = articles.findOne(pathParameters.require("slug")) ?: return notFound()
         val author = checkNotNull(users.findOne(article.author))
-        val user = users.findOne(principal?.subject ?: "")
+        val user = users.findOne(subject ?: "")
 
         return ok(ArticleResponseRoot(article, author, user).serialize(APPLICATION_JSON), contentType = contentType)
     }
 
     fun HttpContext.updateArticle(jwt: Jwt, articles: Store<Article, String>): HttpContext {
-        val principal = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
+        val subject = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
         val body = request.bodyMap().requirePath<Map<String,Any>>("article").let(::PutArticleRequest)
         val slug = pathParameters.require("slug")
 
@@ -145,7 +143,7 @@ internal data class ArticlesRouter(
 
         return if (updated) {
             val article = checkNotNull(articles.findOne(slug))
-            val content = ArticleCreationResponseRoot(article, principal.subject).serialize(APPLICATION_JSON)
+            val content = ArticleCreationResponseRoot(article, subject).serialize(APPLICATION_JSON)
             ok(content, contentType = contentType)
         }
         else {
@@ -163,15 +161,15 @@ internal data class ArticlesRouter(
     }
 
     fun HttpContext.getFeed(jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
-        val principal = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
-        val user = users.findOne(principal.subject) ?: return notFound()
+        val subject = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
+        val user = users.findOne(subject) ?: return notFound()
 
         val feedArticles = if(user.following.isEmpty()) {
             ArticlesResponseRoot(emptyList(), 0)
         }
         else {
             val filter = mapOf(Article::author.name to (user.following.toList()))
-            searchArticles(users, articles, principal.subject, filter)
+            searchArticles(users, articles, subject, filter)
         }
 
         return ok(feedArticles.serialize(APPLICATION_JSON), contentType = contentType)

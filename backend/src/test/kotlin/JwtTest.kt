@@ -10,6 +10,6 @@ class JwtTest {
         val jwt = Jwt(urlOf("classpath:keystore.p12"), "storepass", "realWorld")
         val token = jwt.sign("subject")
 
-        assertEquals("subject", jwt.verify(token).subject)
+        assertEquals("subject", jwt.verify(token))
     }
 }

@@ -8,6 +8,7 @@ import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.server.*
 import com.hexagonkt.http.server.jetty.JettyServletAdapter
 import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
+import com.hexagonkt.realworld.domain.UsersService
 import com.hexagonkt.realworld.rest.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
@@ -31,7 +32,8 @@ data class Application(
 
     private val serverSettings = HttpServerSettings(settings.bindAddress, settings.bindPort, "/api")
     private val serverAdapter = JettyServletAdapter()
-    private val userRouter = UserRouter(jwt, users, contentType, authenticator).userRouter
+    private val usersService = UsersService(users)
+    private val userRouter = UserRouter(jwt, usersService, contentType, authenticator).userRouter
     private val usersRouter = UsersRouter(jwt, users, contentType).usersRouter
     private val profilesRouter = ProfilesRouter(users, contentType, authenticator).profilesRouter
     private val commentsRouter = CommentsRouter(jwt, users, articles, contentType).commentsRouter

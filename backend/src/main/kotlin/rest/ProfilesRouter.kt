@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest
 
-import com.auth0.jwt.interfaces.DecodedJWT
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.http.handlers.HttpContext
@@ -28,8 +27,8 @@ internal data class ProfilesRouter(
     }
 
     private fun HttpContext.getProfile(users: Store<User, String>): HttpContext {
-        val principal = attributes["principal"] as DecodedJWT
-        val user = users.findOne(principal.subject) ?: return notFound("Not Found")
+        val subject = attributes["principal"] as String
+        val user = users.findOne(subject) ?: return notFound("Not Found")
         val profile =
             users.findOne(pathParameters.require("username")) ?: return notFound("Not Found")
         val content = ProfileResponseRoot(
@@ -48,12 +47,12 @@ internal data class ProfilesRouter(
         users: Store<User, String>, follow: Boolean
     ): HttpContext {
 
-        val principal = attributes["principal"] as DecodedJWT
-        val user = users.findOne(principal.subject) ?: return notFound("Not Found")
+        val subject = attributes["principal"] as String
+        val user = users.findOne(subject) ?: return notFound("Not Found")
         val followingList =
             if (follow) user.following + pathParameters["username"]
             else user.following - pathParameters["username"]
-        val updated = users.updateOne(principal.subject, mapOf("following" to followingList))
+        val updated = users.updateOne(subject, mapOf("following" to followingList))
         if (!updated)
             return internalServerError()
         val profile =
