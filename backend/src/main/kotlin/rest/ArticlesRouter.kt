@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.core.withZone
@@ -13,7 +12,6 @@ import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.realworld.rest.messages.*
 import com.hexagonkt.rest.bodyMap
-import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -29,30 +27,29 @@ internal data class ArticlesRouter(
 ) {
     val articlesRouter by lazy {
         path {
-            get("/feed") { getFeed(jwt, users, articles) }
+            get("/feed") { getFeed() }
 
             path("/(?!feed)(?<slug>[^/]+?)") {
 
                 path("/favorite") {
                     use(authenticator)
-                    post { favoriteArticle(users, articles, true) }
-                    delete { favoriteArticle(users, articles, false) }
+                    post { favoriteArticle(true) }
+                    delete { favoriteArticle(false) }
                 }
 
                 path("/comments", commentsRouter)
 
-                delete { deleteArticle(jwt, articles) }
-                put { updateArticle(jwt, articles) }
-                get { getArticle(jwt, users, articles) }
+                delete { deleteArticle() }
+                put { updateArticle() }
+                get { getArticle() }
             }
 
-            post { createArticle(jwt, articles) }
-            get { findArticles(jwt, users, articles) }
+            post { createArticle() }
+            get { findArticles() }
         }
     }
 
-    fun HttpContext.findArticles(
-        jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
+    fun HttpContext.findArticles(): HttpContext {
 
         val subject = jwt.parsePrincipal(this)
         val filter = queryParameters
@@ -65,13 +62,11 @@ internal data class ArticlesRouter(
             }
             .mapValues { it.value.value }
 
-        val foundArticles = searchArticles(users, articles, subject, filter)
-        return ok(foundArticles.serialize(APPLICATION_JSON), contentType = contentType)
+        val foundArticles = searchArticles(subject, filter)
+        return ok(foundArticles, contentType = contentType)
     }
 
-    private fun HttpContext.createArticle(
-        jwt: Jwt, articles: Store<Article, String>
-    ): HttpContext {
+    private fun HttpContext.createArticle(): HttpContext {
         val subject = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
         val bodyArticle = ArticleRequest(request.bodyMap().requirePath("article"))
         val article = Article(
@@ -86,13 +81,10 @@ internal data class ArticlesRouter(
         articles.insertOne(article)
 
         val articleCreationResponseRoot = ArticleCreationResponseRoot(article, subject)
-        return ok(articleCreationResponseRoot.serialize(APPLICATION_JSON), contentType = contentType)
+        return ok(articleCreationResponseRoot, contentType = contentType)
     }
 
-    fun HttpContext.favoriteArticle(
-        users: Store<User, String>, articles: Store<Article, String>, favorite: Boolean
-    ): HttpContext {
-
+    fun HttpContext.favoriteArticle(favorite: Boolean): HttpContext {
         val subject = attributes["principal"] as String
         val slug = pathParameters.require("slug")
         val article = articles.findOne(slug) ?: return notFound()
@@ -111,22 +103,20 @@ internal data class ArticlesRouter(
         val favoritedArticle = article.copy(favoritedBy = favoritedBy)
 
         val articleResponseRoot = ArticleResponseRoot(favoritedArticle, author, user)
-        val body = articleResponseRoot.serialize(APPLICATION_JSON)
-        return ok(body, contentType = contentType)
+        return ok(articleResponseRoot, contentType = contentType)
     }
 
-    fun HttpContext.getArticle(
-        jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
+    fun HttpContext.getArticle(): HttpContext {
 
         val subject = jwt.parsePrincipal(this)
         val article = articles.findOne(pathParameters.require("slug")) ?: return notFound()
         val author = checkNotNull(users.findOne(article.author))
         val user = users.findOne(subject ?: "")
 
-        return ok(ArticleResponseRoot(article, author, user).serialize(APPLICATION_JSON), contentType = contentType)
+        return ok(ArticleResponseRoot(article, author, user), contentType = contentType)
     }
 
-    fun HttpContext.updateArticle(jwt: Jwt, articles: Store<Article, String>): HttpContext {
+    fun HttpContext.updateArticle(): HttpContext {
         val subject = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
         val body = request.bodyMap().requirePath<Map<String,Any>>("article").let(::PutArticleRequest)
         val slug = pathParameters.require("slug")
@@ -143,7 +133,7 @@ internal data class ArticlesRouter(
 
         return if (updated) {
             val article = checkNotNull(articles.findOne(slug))
-            val content = ArticleCreationResponseRoot(article, subject).serialize(APPLICATION_JSON)
+            val content = ArticleCreationResponseRoot(article, subject)
             ok(content, contentType = contentType)
         }
         else {
@@ -151,16 +141,16 @@ internal data class ArticlesRouter(
         }
     }
 
-    fun HttpContext.deleteArticle(jwt: Jwt, articles: Store<Article, String>): HttpContext {
+    fun HttpContext.deleteArticle(): HttpContext {
         jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
         val slug = pathParameters.require("slug")
         return if (!articles.deleteOne(slug))
             notFound("Article $slug not found")
         else
-            ok(OkResponse("Article $slug deleted").serialize(APPLICATION_JSON), contentType = contentType)
+            ok(OkResponse("Article $slug deleted"), contentType = contentType)
     }
 
-    fun HttpContext.getFeed(jwt: Jwt, users: Store<User, String>, articles: Store<Article, String>): HttpContext {
+    fun HttpContext.getFeed(): HttpContext {
         val subject = jwt.parsePrincipal(this) ?: return unauthorized("Unauthorized")
         val user = users.findOne(subject) ?: return notFound()
 
@@ -169,21 +159,16 @@ internal data class ArticlesRouter(
         }
         else {
             val filter = mapOf(Article::author.name to (user.following.toList()))
-            searchArticles(users, articles, subject, filter)
+            searchArticles(subject, filter)
         }
 
-        return ok(feedArticles.serialize(APPLICATION_JSON), contentType = contentType)
+        return ok(feedArticles, contentType = contentType)
     }
 
     fun String.toSlug() =
         this.lowercase().replace(' ', '-')
 
-    fun HttpContext.searchArticles(
-        users: Store<User, String>,
-        articles: Store<Article, String>,
-        subject: String?,
-        filter: Map<String, *>
-    ): ArticlesResponseRoot {
+    fun HttpContext.searchArticles(subject: String?, filter: Map<String, *>): ArticlesResponseRoot {
 
         val sort = mapOf(Article::createdAt.name to false)
         val queryParameters = request.queryParameters
@@ -219,13 +204,7 @@ internal data class ArticlesRouter(
         return ArticlesResponseRoot(responses, articles.count(filter))
     }
 
-    fun getFeed1(
-        subject: String,
-        users: Store<User, String>,
-        articles: Store<Article, String>,
-        limit: Int,
-        offset: Int,
-    ): List<Article> {
+    fun getFeed1(subject: String, limit: Int, offset: Int): List<Article> {
         val user = users.findOne(subject) ?: return emptyList()
 
         val feedArticles = if(user.following.isEmpty()) {
@@ -233,15 +212,13 @@ internal data class ArticlesRouter(
         }
         else {
             val filter = mapOf(Article::author.name to (user.following.toList()))
-            searchArticles1(users, articles, subject, filter, limit, offset)
+            searchArticles1(subject, filter, limit, offset)
         }
 
         return feedArticles
     }
 
     fun searchArticles1(
-        users: Store<User, String>,
-        articles: Store<Article, String>,
         subject: String?,
         filter: Map<String, *>,
         limit: Int,

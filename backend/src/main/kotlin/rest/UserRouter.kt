@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.handlers.HttpContext
 import com.hexagonkt.http.handlers.HttpHandler
@@ -11,7 +10,6 @@ import com.hexagonkt.realworld.rest.messages.UserResponseRoot
 import com.hexagonkt.realworld.Jwt
 import com.hexagonkt.realworld.domain.UsersService
 import com.hexagonkt.rest.bodyMap
-import com.hexagonkt.serialization.serialize
 
 internal data class UserRouter(
     private val jwt: Jwt,
@@ -43,9 +41,6 @@ internal data class UserRouter(
         val user = users.searchUser(subject) ?: return notFound("User: $subject not found")
         val token = jwt.sign(user.username)
 
-        return ok(
-            UserResponseRoot(user, token).serialize(APPLICATION_JSON),
-            contentType = contentType
-        )
+        return ok(UserResponseRoot(user, token), contentType = contentType)
     }
 }

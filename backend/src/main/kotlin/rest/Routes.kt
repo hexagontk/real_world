@@ -12,7 +12,7 @@ import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.rest.messages.ErrorResponseRoot
-import com.hexagonkt.serialization.serialize
+import com.hexagonkt.rest.SerializeResponseCallback
 import kotlin.text.Charsets.UTF_8
 
 internal data class Routes(
@@ -29,6 +29,7 @@ internal data class Routes(
         path {
             filter("*", callback = LoggingCallback(includeBody = false, includeHeaders = false))
             filter("*", callback = CorsCallback(allowedHeaders = allowedHeaders))
+            after("*", callback = SerializeResponseCallback())
 
             after("*") {
                 if (status.code in setOf(401, 403, 404)) statusCodeHandler(status, response.body)
@@ -43,9 +44,7 @@ internal data class Routes(
 
             exception(Exception::class) { exceptionHandler(exception ?: fail) }
             exception<MultipleException>(clear = false) {
-                multipleExceptionHandler(
-                    exception ?: fail
-                )
+                multipleExceptionHandler(exception ?: fail)
             }
         }
     }
@@ -58,7 +57,7 @@ internal data class Routes(
 
         return send(
             status,
-            ErrorResponseRoot(ErrorResponse(messages)).serialize(APPLICATION_JSON),
+            ErrorResponseRoot(ErrorResponse(messages)),
             contentType = contentType
         )
     }
@@ -77,7 +76,7 @@ internal data class Routes(
         val errorMessage = error.javaClass.simpleName + ": " + (error.message ?: "<no message>")
         val errorResponseRoot = ErrorResponseRoot(ErrorResponse(listOf(errorMessage)))
         return internalServerError(
-            errorResponseRoot.serialize(APPLICATION_JSON),
+            errorResponseRoot,
             contentType = contentType
         )
     }

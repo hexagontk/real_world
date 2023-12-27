@@ -1,11 +1,9 @@
 package com.hexagonkt.realworld.rest
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.rest.messages.TagsResponseRoot
 import com.hexagonkt.realworld.domain.model.Article
-import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store
 
 internal data class TagsRouter(
@@ -27,7 +25,7 @@ internal data class TagsRouter(
                     }
                     .distinct()
 
-                ok(TagsResponseRoot(tags).serialize(APPLICATION_JSON), contentType = contentType)
+                ok(TagsResponseRoot(tags), contentType = contentType)
             }
         }
     }

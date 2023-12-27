@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.http.handlers.HttpContext
 import com.hexagonkt.http.handlers.HttpHandler
@@ -9,7 +8,6 @@ import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.rest.messages.ProfileResponse
 import com.hexagonkt.realworld.rest.messages.ProfileResponseRoot
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store
 
 internal data class ProfilesRouter(
@@ -40,7 +38,7 @@ internal data class ProfilesRouter(
             )
         )
 
-        return ok(content.serialize(APPLICATION_JSON), contentType = contentType)
+        return ok(content, contentType = contentType)
     }
 
     private fun HttpContext.followProfile(
@@ -66,6 +64,6 @@ internal data class ProfilesRouter(
             )
         )
 
-        return ok(content.serialize(APPLICATION_JSON), contentType = contentType)
+        return ok(content, contentType = contentType)
     }
 }

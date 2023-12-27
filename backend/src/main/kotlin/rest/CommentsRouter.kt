@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.handlers.path
@@ -13,7 +12,6 @@ import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.realworld.rest.messages.CommentRequest
 import com.hexagonkt.realworld.rest.messages.CommentResponse
 import com.hexagonkt.realworld.rest.messages.OkResponse
-import com.hexagonkt.serialization.serialize
 import com.hexagonkt.store.Store
 
 internal data class CommentsRouter(
@@ -45,7 +43,7 @@ internal data class CommentsRouter(
 
             val content = mapOf("comment" to CommentResponse(comment, author, user))
 
-            ok(content.serialize(APPLICATION_JSON), contentType = contentType)
+            ok(content, contentType = contentType)
         }
 
         get {
@@ -61,7 +59,7 @@ internal data class CommentsRouter(
 
             val content = article.comments.map { CommentResponse(it, author, user) }
 
-            ok(mapOf("comments" to content).serialize(APPLICATION_JSON), contentType = contentType)
+            ok(mapOf("comments" to content), contentType = contentType)
         }
 
         delete("/{id}") {
@@ -76,7 +74,7 @@ internal data class CommentsRouter(
             if (!updated)
                 return@delete internalServerError("Not updated")
 
-            ok(OkResponse("$id deleted").serialize(APPLICATION_JSON), contentType = contentType)
+            ok(OkResponse("$id deleted"), contentType = contentType)
         }
     }
 }
