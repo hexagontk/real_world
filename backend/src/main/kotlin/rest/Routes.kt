@@ -42,8 +42,8 @@ internal data class Routes(
             path("/articles", articlesRouter)
             path("/tags", tagsRouter)
 
-            exception(Exception::class) { exceptionHandler(exception ?: fail) }
-            exception<MultipleException>(clear = false) {
+            exception<Exception> { exceptionHandler(exception ?: fail) }
+            exception<MultipleException> {
                 multipleExceptionHandler(exception ?: fail)
             }
         }
@@ -55,11 +55,7 @@ internal data class Routes(
             else -> listOf(body.toString())
         }
 
-        return send(
-            status,
-            ErrorResponseRoot(ErrorResponse(messages)),
-            contentType = contentType
-        )
+        return send(status, ErrorResponseRoot(ErrorResponse(messages)), contentType = contentType)
     }
 
     internal fun HttpContext.multipleExceptionHandler(error: Exception): HttpContext {
@@ -69,15 +65,13 @@ internal data class Routes(
                 ErrorResponseRoot(ErrorResponse(messages)),
                 contentType = contentType
             )
-        } else this
+        }
+        else exceptionHandler(error)
     }
 
     internal fun HttpContext.exceptionHandler(error: Exception): HttpContext {
         val errorMessage = error.javaClass.simpleName + ": " + (error.message ?: "<no message>")
         val errorResponseRoot = ErrorResponseRoot(ErrorResponse(listOf(errorMessage)))
-        return internalServerError(
-            errorResponseRoot,
-            contentType = contentType
-        )
+        return internalServerError(errorResponseRoot, contentType = contentType)
     }
 }
