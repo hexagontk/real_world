@@ -78,5 +78,5 @@ This is still to be implemented by the CI/CD pipeline using GitHub Actions.
 * Create native executable using GraalVM
 * Publish front end in GitHub pages
 * Migrate readme.md API documentation to Swagger
-* ArchUnit
-* Cucumber tests
+* ArchUnit or Konsist tests
+* Cucumber or Kotest tests
