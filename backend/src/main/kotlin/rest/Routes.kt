@@ -3,16 +3,15 @@ package com.hexagonkt.realworld.rest
 import com.hexagonkt.core.MultipleException
 import com.hexagonkt.core.fail
 import com.hexagonkt.core.media.APPLICATION_JSON
+import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.HttpHandler
+import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.HttpStatus
 import com.hexagonkt.http.server.callbacks.CorsCallback
 import com.hexagonkt.http.server.callbacks.LoggingCallback
-import com.hexagonkt.http.handlers.HttpContext
-import com.hexagonkt.http.handlers.HttpHandler
-import com.hexagonkt.http.handlers.path
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.rest.messages.ErrorResponseRoot
-import com.hexagonkt.rest.SerializeResponseCallback
 import kotlin.text.Charsets.UTF_8
 
 internal data class Routes(
@@ -29,7 +28,7 @@ internal data class Routes(
         path {
             filter("*", callback = LoggingCallback(includeBody = false, includeHeaders = false))
             filter("*", callback = CorsCallback(allowedHeaders = allowedHeaders))
-            after("*", callback = SerializeResponseCallback())
+            after("*", callback = ResponseSerializationCallback())
 
             exception<Exception> { exceptionHandler(exception ?: fail) }
             exception<MultipleException> { multipleExceptionHandler(exception ?: fail) }
