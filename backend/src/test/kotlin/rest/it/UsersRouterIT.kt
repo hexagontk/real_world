@@ -1,13 +1,8 @@
 package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.core.Jvm
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.core.urlOf
-import com.hexagonkt.http.client.HttpClient
-import com.hexagonkt.http.client.HttpClientSettings
-import com.hexagonkt.http.client.jetty.JettyClientAdapter
-import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.INTERNAL_SERVER_ERROR_500
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
@@ -53,9 +48,7 @@ class UsersRouterIT {
     }
 
     @Test fun `Delete, login and register users`() {
-        val endpoint = urlOf("http://localhost:${port ?: application.server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
-        val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
+        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
 
         client.deleteUser(jake)
         client.deleteUser(jake, setOf(404))

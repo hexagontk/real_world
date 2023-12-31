@@ -1,11 +1,6 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.urlOf
-import com.hexagonkt.http.client.HttpClient
-import com.hexagonkt.http.client.HttpClientSettings
-import com.hexagonkt.http.client.jetty.JettyClientAdapter
-import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
 import com.hexagonkt.realworld.main
@@ -49,10 +44,7 @@ class CommentsIT {
     }
 
     @Test fun `Delete, create and get article's comments`() {
-        val endpoint = urlOf("http://localhost:${application.server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
-        val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
-
+        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -64,10 +56,7 @@ class CommentsIT {
     }
 
     @Test fun `Get article's comments without login`() {
-        val endpoint = urlOf("http://localhost:${application.server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
-        val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
-
+        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -80,8 +69,7 @@ class CommentsIT {
     }
 
 //    @Test fun `Post comment to a not created article`() {
-//        val endpoint = "http://localhost:${server.runtimePort}/api"
-//        val client = RealWorldClient(Client(endpoint, Json.contentType))
+//        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
 //
 //        val jakeClient = client.initializeUser(jake)
 //

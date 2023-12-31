@@ -1,11 +1,6 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.urlOf
-import com.hexagonkt.http.client.HttpClient
-import com.hexagonkt.http.client.HttpClientSettings
-import com.hexagonkt.http.client.jetty.JettyClientAdapter
-import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
 import com.hexagonkt.realworld.main
@@ -46,10 +41,7 @@ class ProfilesRouterIT {
     }
 
     @Test fun `Follow and unfollow a profile`() {
-        val endpoint = urlOf("http://localhost:${application.server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
-        val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
-
+        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)
 

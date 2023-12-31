@@ -2,6 +2,7 @@ package com.hexagonkt.realworld
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requirePath
+import com.hexagonkt.core.urlOf
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
@@ -15,6 +16,13 @@ import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 
 internal class RealWorldClient(val client: HttpClient) {
+
+    constructor(endpoint: String) : this(
+        HttpClient(
+            JettyClientAdapter(),
+            HttpClientSettings(urlOf(endpoint), ContentType(APPLICATION_JSON))
+        )
+    )
 
     init {
         client.start()

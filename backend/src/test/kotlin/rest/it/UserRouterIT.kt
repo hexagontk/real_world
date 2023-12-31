@@ -3,9 +3,6 @@ package com.hexagonkt.realworld.rest.it
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.urlOf
 import com.hexagonkt.core.requirePath
-import com.hexagonkt.http.client.HttpClient
-import com.hexagonkt.http.client.HttpClientSettings
-import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.UNAUTHORIZED_401
 import com.hexagonkt.realworld.RealWorldClient
@@ -44,10 +41,7 @@ class UserRouterIT {
     }
 
     @Test fun `Get and update current user`() {
-        val endpoint = urlOf("http://localhost:${application.server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
-        val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
-
+        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.getUser(jake)

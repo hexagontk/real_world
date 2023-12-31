@@ -1,11 +1,6 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.urlOf
-import com.hexagonkt.http.client.HttpClient
-import com.hexagonkt.http.client.HttpClientSettings
-import com.hexagonkt.http.client.jetty.JettyClientAdapter
-import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.NOT_FOUND_404
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
@@ -43,10 +38,7 @@ class RoutesIT {
     }
 
     @Test fun `Non existing route returns a 404`() {
-        val endpoint = urlOf("http://localhost:${application.server.runtimePort}/api")
-        val settings = HttpClientSettings(endpoint, ContentType(APPLICATION_JSON))
-        val client = RealWorldClient(HttpClient(JettyClientAdapter(), settings))
-
+        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.client.get("/404").apply { assertEquals(NOT_FOUND_404, status) }
