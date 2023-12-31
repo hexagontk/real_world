@@ -31,6 +31,9 @@ internal data class Routes(
             filter("*", callback = CorsCallback(allowedHeaders = allowedHeaders))
             after("*", callback = SerializeResponseCallback())
 
+            exception<Exception> { exceptionHandler(exception ?: fail) }
+            exception<MultipleException> { multipleExceptionHandler(exception ?: fail) }
+
             after("*") {
                 if (status.code in setOf(401, 403, 404)) statusCodeHandler(status, response.body)
                 else this
@@ -41,11 +44,6 @@ internal data class Routes(
             path("/profiles/{username}", profilesRouter)
             path("/articles", articlesRouter)
             path("/tags", tagsRouter)
-
-            exception<Exception> { exceptionHandler(exception ?: fail) }
-            exception<MultipleException> {
-                multipleExceptionHandler(exception ?: fail)
-            }
         }
     }
 
