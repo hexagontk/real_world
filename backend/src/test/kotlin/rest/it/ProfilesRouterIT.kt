@@ -5,6 +5,8 @@ import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
 import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.domain.model.User
+import com.hexagonkt.serialization.SerializationManager
+import com.hexagonkt.serialization.jackson.json.Json
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -31,6 +33,7 @@ class ProfilesRouterIT {
     )
 
     @BeforeAll fun startup() {
+        SerializationManager.formats = setOf(Json)
         System.setProperty("mongodbUrl", mongodbUrl)
 
         main()

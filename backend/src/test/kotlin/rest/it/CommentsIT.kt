@@ -7,6 +7,8 @@ import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.rest.messages.CommentRequest
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
+import com.hexagonkt.serialization.SerializationManager
+import com.hexagonkt.serialization.jackson.json.Json
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -34,6 +36,7 @@ class CommentsIT {
     )
 
     @BeforeAll fun startup() {
+        SerializationManager.formats = setOf(Json)
         System.setProperty("mongodbUrl", mongodbUrl)
 
         main()
@@ -68,11 +71,10 @@ class CommentsIT {
         client.getComments(trainDragon.slug, 1, 2)
     }
 
-//    @Test fun `Post comment to a not created article`() {
-//        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
-//
-//        val jakeClient = client.initializeUser(jake)
-//
-//        jakeClient.createComment("non_existing_article", CommentRequest("Nice film"))
-//    }
+    @Test fun `Post comment to a not created article`() {
+        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val jakeClient = client.initializeUser(jake)
+
+        jakeClient.createComment("non_existing_article", CommentRequest("Nice film"))
+    }
 }

@@ -6,12 +6,13 @@ import com.hexagonkt.core.urlOf
 import com.hexagonkt.http.client.HttpClient
 import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
+import com.hexagonkt.http.handlers.BeforeHandler
 import com.hexagonkt.http.model.*
 import com.hexagonkt.realworld.rest.messages.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
+import com.hexagonkt.rest.SerializeRequestCallback
 import com.hexagonkt.rest.bodyMap
-import com.hexagonkt.serialization.serialize
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 
@@ -20,7 +21,8 @@ internal class RealWorldClient(val client: HttpClient) {
     constructor(endpoint: String) : this(
         HttpClient(
             JettyClientAdapter(),
-            HttpClientSettings(urlOf(endpoint), ContentType(APPLICATION_JSON))
+            HttpClientSettings(urlOf(endpoint), ContentType(APPLICATION_JSON)),
+            BeforeHandler("*", SerializeRequestCallback())
         )
     )
 
@@ -56,11 +58,11 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun registerUser(user: User, callback: HttpResponsePort.() -> Unit) {
-        client.post("/users", mapOf("user" to user.toRegistrationRequest()).serialize(APPLICATION_JSON)).apply(callback)
+        client.post("/users", mapOf("user" to user.toRegistrationRequest())).apply(callback)
     }
 
     fun loginUser(user: User): RealWorldClient {
-        val header = client.post("/users/login", mapOf("user" to user.toLoginRequest()).serialize(APPLICATION_JSON)).let {
+        val header = client.post("/users/login", mapOf("user" to user.toLoginRequest())).let {
             assertEquals(OK_200, it.status)
             assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), it.contentType)
 
@@ -77,7 +79,11 @@ internal class RealWorldClient(val client: HttpClient) {
             client.settings.contentType,
             authorization = Authorization("token", header),
         )
-        val userClient = HttpClient(JettyClientAdapter(), settings)
+        val userClient = HttpClient(
+            JettyClientAdapter(),
+            settings,
+            BeforeHandler("*", SerializeRequestCallback())
+        )
         return RealWorldClient(userClient)
     }
 
@@ -115,8 +121,10 @@ internal class RealWorldClient(val client: HttpClient) {
         }
     }
 
-    fun updateUser(user: User, updateRequest: PutUserRequest, callback: HttpResponsePort.(User) -> Unit) {
-        client.put("/user", mapOf("user" to updateRequest).serialize(APPLICATION_JSON)).apply { callback(user) }
+    fun updateUser(
+        user: User, updateRequest: PutUserRequest, callback: HttpResponsePort.(User) -> Unit
+    ) {
+        client.put("/user", mapOf("user" to updateRequest)).apply { callback(user) }
     }
 
     fun getProfile(user: User, following: Boolean) {
@@ -145,7 +153,7 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun postArticle(article: Article) {
-        client.post("/articles", mapOf("article" to article.toCreationRequest()).serialize(APPLICATION_JSON)).apply {
+        client.post("/articles", mapOf("article" to article.toCreationRequest())).apply {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
@@ -183,7 +191,7 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun updateArticle(article: Article, updateRequest: PutArticleRequest) {
-        client.put("/articles/${article.slug}", mapOf("article" to updateRequest).serialize(APPLICATION_JSON)).apply {
+        client.put("/articles/${article.slug}", mapOf("article" to updateRequest)).apply {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
@@ -238,7 +246,7 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun createComment(article: String, comment: CommentRequest) {
-        client.post("/articles/$article/comments", mapOf("comment" to comment).serialize(APPLICATION_JSON)).apply {
+        client.post("/articles/$article/comments", mapOf("comment" to comment)).apply {
             assert(status in setOf(OK_200, NOT_FOUND_404))
             assertEquals(contentType, contentType)
 
