@@ -29,6 +29,7 @@ dependencies {
     "implementation"("com.hexagonkt.extra:store_mongodb:$hexagonExtraVersion")
     "implementation"("com.auth0:java-jwt:$javaJwtVersion")
 
+    "testImplementation"("com.hexagonkt:rest_tools:$hexagonVersion")
     "testImplementation"("com.hexagonkt:http_client_jetty:$hexagonVersion")
     "testImplementation"("org.testcontainers:mongodb:$testcontainersVersion")
     "testImplementation"("io.mockk:mockk:$mockkVersion") {

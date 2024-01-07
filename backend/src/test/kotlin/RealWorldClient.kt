@@ -30,15 +30,6 @@ internal class RealWorldClient(val client: HttpClient) {
         client.start()
     }
 
-    private fun User.toRegistrationRequest(): RegistrationRequest =
-        RegistrationRequest(email, username, password)
-
-    private fun User.toLoginRequest(): LoginRequest =
-        LoginRequest(email, password)
-
-    private fun Article.toCreationRequest(): ArticleRequest =
-        ArticleRequest(title, description, body, tagList)
-
     fun deleteUser(user: User, allowedCodes: Set<Int> = setOf(200, 404)) {
         client.delete("/users/${user.username}").apply {
             assert(status.code in allowedCodes) { "${status.code} not in $allowedCodes" }
@@ -311,4 +302,13 @@ internal class RealWorldClient(val client: HttpClient) {
             return articles
         }
     }
+
+    private fun User.toRegistrationRequest(): RegistrationRequest =
+        RegistrationRequest(email, username, password)
+
+    private fun User.toLoginRequest(): LoginRequest =
+        LoginRequest(email, password)
+
+    private fun Article.toCreationRequest(): ArticleRequest =
+        ArticleRequest(title, description, body, tagList)
 }
