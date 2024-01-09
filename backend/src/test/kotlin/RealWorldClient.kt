@@ -2,27 +2,23 @@ package com.hexagonkt.realworld
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requirePath
-import com.hexagonkt.core.urlOf
-import com.hexagonkt.http.client.HttpClient
-import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
-import com.hexagonkt.http.handlers.BeforeHandler
 import com.hexagonkt.http.model.*
 import com.hexagonkt.realworld.rest.messages.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.rest.SerializeRequestCallback
 import com.hexagonkt.rest.bodyMap
+import com.hexagonkt.rest.tools.Http
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 
-internal class RealWorldClient(val client: HttpClient) {
+internal class RealWorldClient(val client: Http) {
 
     constructor(endpoint: String) : this(
-        HttpClient(
+        Http(
             JettyClientAdapter(),
-            HttpClientSettings(urlOf(endpoint), ContentType(APPLICATION_JSON)),
-            BeforeHandler("*", SerializeRequestCallback())
+            endpoint,
+            ContentType(APPLICATION_JSON)
         )
     )
 
@@ -33,7 +29,7 @@ internal class RealWorldClient(val client: HttpClient) {
     fun deleteUser(user: User, allowedCodes: Set<Int> = setOf(200, 404)) {
         client.delete("/users/${user.username}").apply {
             assert(status.code in allowedCodes) { "${status.code} not in $allowedCodes" }
-            assertEquals(contentType, contentType)
+            assertEquals(client.contentType, contentType)
         }
     }
 
@@ -49,11 +45,11 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun registerUser(user: User, callback: HttpResponsePort.() -> Unit) {
-        client.post("/users", mapOf("user" to user.toRegistrationRequest())).apply(callback)
+        client.post("/users", body = mapOf("user" to user.toRegistrationRequest())).apply(callback)
     }
 
     fun loginUser(user: User): RealWorldClient {
-        val header = client.post("/users/login", mapOf("user" to user.toLoginRequest())).let {
+        val header = client.post("/users/login", body = mapOf("user" to user.toLoginRequest())).let {
             assertEquals(OK_200, it.status)
             assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), it.contentType)
 
@@ -65,17 +61,13 @@ internal class RealWorldClient(val client: HttpClient) {
             userResponse.token
         }
 
-        val settings = HttpClientSettings(
-            client.settings.baseUrl,
-            client.settings.contentType,
-            authorization = Authorization("token", header),
+        return RealWorldClient(
+            Http(
+                client.adapter,
+                client.url,
+                authorization = Authorization("token", header)
+            )
         )
-        val userClient = HttpClient(
-            JettyClientAdapter(),
-            settings,
-            BeforeHandler("*", SerializeRequestCallback())
-        )
-        return RealWorldClient(userClient)
     }
 
     fun initializeUser(user: User): RealWorldClient {
@@ -144,7 +136,7 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun postArticle(article: Article) {
-        client.post("/articles", mapOf("article" to article.toCreationRequest())).apply {
+        client.post("/articles", body = mapOf("article" to article.toCreationRequest())).apply {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
@@ -237,7 +229,7 @@ internal class RealWorldClient(val client: HttpClient) {
     }
 
     fun createComment(article: String, comment: CommentRequest) {
-        client.post("/articles/$article/comments", mapOf("comment" to comment)).apply {
+        client.post("/articles/$article/comments", body = mapOf("comment" to comment)).apply {
             assert(status in setOf(OK_200, NOT_FOUND_404))
             assertEquals(contentType, contentType)
 

@@ -12,6 +12,7 @@ import com.hexagonkt.http.server.callbacks.CorsCallback
 import com.hexagonkt.http.server.callbacks.LoggingCallback
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.rest.messages.ErrorResponseRoot
+import com.hexagonkt.rest.SerializeResponseCallback
 import kotlin.text.Charsets.UTF_8
 
 internal data class Routes(
@@ -28,7 +29,7 @@ internal data class Routes(
         path {
             filter("*", callback = LoggingCallback(includeBody = false, includeHeaders = false))
             filter("*", callback = CorsCallback(allowedHeaders = allowedHeaders))
-            after("*", callback = ResponseSerializationCallback())
+            after("*", callback = SerializeResponseCallback())
 
             exception<Exception> { exceptionHandler(exception ?: fail) }
             exception<MultipleException> { multipleExceptionHandler(exception ?: fail) }
