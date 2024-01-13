@@ -1,5 +1,4 @@
 
-name: GitHub Actions
 on:
   - push
   - pull_request

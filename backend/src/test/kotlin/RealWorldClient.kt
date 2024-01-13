@@ -14,13 +14,11 @@ import kotlin.test.assertEquals
 
 internal class RealWorldClient(val client: Http) {
 
-    constructor(endpoint: String) : this(
-        Http(
-            JettyClientAdapter(),
-            endpoint,
-            ContentType(APPLICATION_JSON)
-        )
-    )
+    companion object {
+        val json = ContentType(APPLICATION_JSON)
+    }
+
+    constructor(endpoint: String) : this(Http(JettyClientAdapter(), endpoint, json))
 
     init {
         client.start()
@@ -45,11 +43,11 @@ internal class RealWorldClient(val client: Http) {
     }
 
     fun registerUser(user: User, callback: HttpResponsePort.() -> Unit) {
-        client.post("/users", body = mapOf("user" to user.toRegistrationRequest())).apply(callback)
+        client.post("/users", mapOf("user" to user.toRegistrationRequest())).apply(callback)
     }
 
     fun loginUser(user: User): RealWorldClient {
-        val header = client.post("/users/login", body = mapOf("user" to user.toLoginRequest())).let {
+        val header = client.post("/users/login", mapOf("user" to user.toLoginRequest())).let {
             assertEquals(OK_200, it.status)
             assertEquals(ContentType(APPLICATION_JSON, charset = Charsets.UTF_8), it.contentType)
 
@@ -65,6 +63,7 @@ internal class RealWorldClient(val client: Http) {
             Http(
                 client.adapter,
                 client.url,
+                json,
                 authorization = Authorization("token", header)
             )
         )
@@ -136,7 +135,7 @@ internal class RealWorldClient(val client: Http) {
     }
 
     fun postArticle(article: Article) {
-        client.post("/articles", body = mapOf("article" to article.toCreationRequest())).apply {
+        client.post("/articles", mapOf("article" to article.toCreationRequest())).apply {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
@@ -229,7 +228,7 @@ internal class RealWorldClient(val client: Http) {
     }
 
     fun createComment(article: String, comment: CommentRequest) {
-        client.post("/articles/$article/comments", body = mapOf("comment" to comment)).apply {
+        client.post("/articles/$article/comments", mapOf("comment" to comment)).apply {
             assert(status in setOf(OK_200, NOT_FOUND_404))
             assertEquals(contentType, contentType)
 

@@ -8,6 +8,10 @@
 ### [Demo](https://github.com/gothinkster/realworld)
 TODO Set working demo URL
 
+TODO Document setup: refer to `.git/hooks/pre-push.sample` for information about this hook script.
+
+TODO Document clean up To clean Docker artifacts execute: `sudo docker system prune -af`
+
 ### [RealWorld]
 This codebase was created to demonstrate a fully fledged fullstack application built with
 **Hexagon** including CRUD operations, authentication, routing, pagination, and more.
