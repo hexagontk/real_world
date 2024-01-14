@@ -1,12 +1,21 @@
 package com.hexagonkt.realworld.rest
 
+import com.hexagonkt.core.CodedException
 import com.hexagonkt.core.urlOf
+import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.HttpPredicate
+import com.hexagonkt.http.model.HttpCall
+import com.hexagonkt.http.model.HttpMethod.GET
+import com.hexagonkt.http.model.HttpRequest
 import com.hexagonkt.realworld.Settings
 import com.hexagonkt.realworld.createJwt
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.store.Store
+import io.mockk.every
 import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
+import kotlin.test.Test
 
 class ArticlesRouterTest {
 
@@ -44,8 +53,9 @@ class ArticlesRouterTest {
 //    @Test fun `Favorite not found article returns 404`() {
 //        every { articleStore.findOne("sample") } returns null
 //
-//        val request = TestRequest(pathParameters = mapOf("slug" to "sample"))
-//        val call = testCall(request = request)
+//        val request = HttpRequest(GET, path = "sample")
+//
+//        val call = ArticlesRouter().articlesRouter.process(request)
 //        call.attributes["principal"] = principal
 //
 //        try {
