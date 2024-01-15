@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
 import com.hexagonkt.realworld.main
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import java.net.URI
 
 @TestInstance(PER_CLASS)
 class ProfilesRouterIT {
@@ -21,7 +21,7 @@ class ProfilesRouterIT {
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     private val jane = User(
@@ -29,7 +29,7 @@ class ProfilesRouterIT {
         email = "jane@jane.jane",
         password = "janejane",
         bio = "I own MegaCloud",
-        image = urlOf("https://i.pravatar.cc/150?img=1")
+        image = URI("https://i.pravatar.cc/150?img=1")
     )
 
     @BeforeAll fun startup() {

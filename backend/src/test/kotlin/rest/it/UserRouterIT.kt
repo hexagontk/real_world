@@ -1,7 +1,6 @@
 package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.core.media.APPLICATION_JSON
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.UNAUTHORIZED_401
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import java.net.URI
 import kotlin.test.assertEquals
 
 @TestInstance(PER_CLASS)
@@ -29,7 +29,7 @@ class UserRouterIT {
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     @BeforeAll fun startup() {

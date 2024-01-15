@@ -1,6 +1,5 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.http.model.NOT_FOUND_404
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import java.net.URI
 import kotlin.test.assertEquals
 
 /**
@@ -26,7 +26,7 @@ class RoutesIT {
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     @BeforeAll fun startup() {

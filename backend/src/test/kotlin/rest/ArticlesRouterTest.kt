@@ -1,30 +1,21 @@
 package com.hexagonkt.realworld.rest
 
-import com.hexagonkt.core.CodedException
-import com.hexagonkt.core.urlOf
-import com.hexagonkt.http.handlers.HttpContext
-import com.hexagonkt.http.handlers.HttpPredicate
-import com.hexagonkt.http.model.HttpCall
-import com.hexagonkt.http.model.HttpMethod.GET
-import com.hexagonkt.http.model.HttpRequest
 import com.hexagonkt.realworld.Settings
 import com.hexagonkt.realworld.createJwt
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.store.Store
-import io.mockk.every
 import io.mockk.mockk
-import junit.framework.TestCase.assertEquals
-import kotlin.test.Test
+import java.net.URI
 
-class ArticlesRouterTest {
+internal class ArticlesRouterTest {
 
     private val jake = User(
         username = "jake",
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     private val jane = User(
@@ -32,7 +23,7 @@ class ArticlesRouterTest {
         email = "jane@jane.jane",
         password = "janejane",
         bio = "I own MegaCloud",
-        image = urlOf("https://i.pravatar.cc/150?img=1")
+        image = URI("https://i.pravatar.cc/150?img=1")
     )
 
     private val trainDragon = Article(

@@ -8,6 +8,7 @@ import com.hexagonkt.store.Store
 import com.hexagonkt.store.mongodb.MongoDbStore
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
+import java.net.URI
 
 val application by lazy {
     val settings = Settings()
@@ -46,7 +47,7 @@ private fun createUserStore(settings: Settings): Store<User, String> {
                 email = it.requireString(User::email),
                 password = it.requireString(User::password),
                 bio = it.getString(User::bio),
-                image = it.getString(User::image)?.let(::urlOf),
+                image = it.getString(User::image)?.let(::URI),
                 following = it.getStringsOrEmpty(User::following).toSet(),
             )
         },

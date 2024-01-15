@@ -2,7 +2,6 @@ package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.core.Jvm
 import com.hexagonkt.core.requirePath
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.http.model.INTERNAL_SERVER_ERROR_500
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import java.net.URI
 import kotlin.test.assertEquals
 
 /**
@@ -34,7 +34,7 @@ class UsersRouterIT {
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     @BeforeAll fun startup() {
