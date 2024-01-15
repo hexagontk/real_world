@@ -10,7 +10,7 @@ data class ArticleRequest(
     val body: String,
     val tagList: Set<String>
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.requireString(ArticleRequest::title),
         data.requireString(ArticleRequest::description),
         data.requireString(ArticleRequest::body),
@@ -24,7 +24,7 @@ data class AuthorResponse(
     val image: String,
     val following: Boolean
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         username = data.requireString(AuthorResponse::username),
         bio = data.requireString(AuthorResponse::bio),
         image = data.requireString(AuthorResponse::image),
@@ -44,7 +44,7 @@ data class ArticleCreationResponse(
     val favoritesCount: Int,
     val author: String
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         slug = data.requireString(ArticleCreationResponse::slug),
         title = data.requireString(ArticleCreationResponse::title),
         description = data.requireString(ArticleCreationResponse::description),
@@ -81,7 +81,7 @@ data class PutArticleRequest(
     val body: String? = null,
     val tagList: Set<String> = emptySet()
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.getString(PutArticleRequest::title),
         data.getString(PutArticleRequest::description),
         data.getString(PutArticleRequest::body),
@@ -109,7 +109,7 @@ data class ArticleResponse(
     val favoritesCount: Int,
     val author: AuthorResponse
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         slug = data.requireString(ArticleCreationResponse::slug),
         title = data.requireString(ArticleCreationResponse::title),
         description = data.requireString(ArticleCreationResponse::description),
