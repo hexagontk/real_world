@@ -190,7 +190,7 @@ internal class RealWorldClient(val client: Http) {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
-            val feedArticles = bodyMap().requirePath<List<Map<*, *>>>("articles").map { ArticleResponse(it) }
+            val feedArticles = bodyMap().requirePath<List<Map<String, *>>>("articles").map { ArticleResponse(it) }
             val feedResponse = ArticlesResponseRoot(feedArticles, articles.size.toLong())
             assert(feedResponse.articlesCount >= feedResponse.articles.size)
             assertEquals(articles.size, feedResponse.articles.size)
@@ -256,7 +256,7 @@ internal class RealWorldClient(val client: Http) {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
-            val commentsResponse = bodyMap().requirePath<List<Map<*, *>>>("comments").map { CommentResponse(it) }
+            val commentsResponse = bodyMap().requirePath<List<Map<String, *>>>("comments").map { CommentResponse(it) }
             assertEquals(ids.size, commentsResponse.size)
             assert(commentsResponse.map { it.id }.containsAll(ids.toSet()))
         }
@@ -287,7 +287,7 @@ internal class RealWorldClient(val client: Http) {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
-            val articles = bodyMap().requirePath<List<Map<*, *>>>("articles").map { ArticleResponse(it) }
+            val articles = bodyMap().requirePath<List<Map<String, *>>>("articles").map { ArticleResponse(it) }
             val articlesRoot = ArticlesResponseRoot(articles, articles.size.toLong())
             assert(articlesRoot.articlesCount >= 0)
             return articles

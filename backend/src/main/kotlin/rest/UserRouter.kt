@@ -27,7 +27,7 @@ internal data class UserRouter(
 
         put {
             val subject = jwt.parsePrincipal(this) ?: return@put unauthorized("Unauthorized")
-            val body = PutUserRequest(request.bodyMap().requirePath<Map<*, *>>("user"))
+            val body = PutUserRequest(request.bodyMap().requirePath<Map<String, *>>("user"))
             val updates = body.toFieldsMap()
 
             val updated = users.replaceUser(subject, updates)
