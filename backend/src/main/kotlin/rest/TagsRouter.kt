@@ -1,5 +1,6 @@
 package com.hexagonkt.realworld.rest
 
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.rest.messages.TagsResponseRoot
@@ -9,8 +10,9 @@ import com.hexagonkt.store.Store
 internal data class TagsRouter(
     private val articles: Store<Article, String>,
     private val contentType: ContentType,
-) {
-    internal val tagsRouter by lazy {
+) : HttpController {
+
+    override val handler by lazy {
         path {
             get {
                 val field = Article::tagList.name

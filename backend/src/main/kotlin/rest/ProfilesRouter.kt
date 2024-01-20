@@ -2,6 +2,7 @@ package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.require
 import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
@@ -14,8 +15,9 @@ internal data class ProfilesRouter(
     private val users: Store<User, String>,
     private val contentType: ContentType,
     private val authenticator: HttpHandler,
-) {
-    internal val profilesRouter by lazy {
+) : HttpController {
+
+    override val handler by lazy {
         path {
             use(authenticator)
             post("/follow") { followProfile(users, true) }

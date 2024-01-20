@@ -2,6 +2,7 @@ package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requirePath
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.Jwt
@@ -14,8 +15,9 @@ internal data class UsersRouter(
     private val jwt: Jwt,
     private val users: Store<User, String>,
     private val contentType: ContentType,
-) {
-    internal val usersRouter = path {
+) : HttpController{
+
+    override val handler = path {
         // TODO Authenticate and require 'root' user or owner
         delete("/{username}") {
             val username = pathParameters.require("username")

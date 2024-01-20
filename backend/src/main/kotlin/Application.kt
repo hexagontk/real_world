@@ -6,7 +6,7 @@ import com.hexagonkt.http.handlers.FilterHandler
 import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.server.*
-import com.hexagonkt.http.server.jetty.JettyServletAdapter
+import com.hexagonkt.http.server.netty.NettyServerAdapter
 import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
 import com.hexagonkt.realworld.domain.UsersService
 import com.hexagonkt.realworld.rest.*
@@ -31,15 +31,15 @@ data class Application(
     }
 
     private val serverSettings = HttpServerSettings(settings.bindAddress, settings.bindPort, "/api")
-    private val serverAdapter = JettyServletAdapter()
+    private val serverAdapter = NettyServerAdapter()
     private val usersService = UsersService(users)
-    private val userRouter = UserRouter(jwt, usersService, contentType, authenticator).userRouter
-    private val usersRouter = UsersRouter(jwt, users, contentType).usersRouter
-    private val profilesRouter = ProfilesRouter(users, contentType, authenticator).profilesRouter
-    private val commentsRouter = CommentsRouter(jwt, users, articles, contentType).commentsRouter
-    private val articlesRouter = ArticlesRouter(jwt, users, articles, contentType, authenticator, commentsRouter).articlesRouter
-    private val tagsRouter = TagsRouter(articles, contentType).tagsRouter
-    private val router: HttpHandler by lazy { Routes(userRouter, usersRouter, profilesRouter, articlesRouter, tagsRouter).router }
+    private val userRouter = UserRouter(jwt, usersService, contentType, authenticator)
+    private val usersRouter = UsersRouter(jwt, users, contentType)
+    private val profilesRouter = ProfilesRouter(users, contentType, authenticator)
+    private val commentsRouter = CommentsRouter(jwt, users, articles, contentType)
+    private val articlesRouter = ArticlesRouter(jwt, users, articles, contentType, authenticator, commentsRouter)
+    private val tagsRouter = TagsRouter(articles, contentType)
+    private val router: HttpHandler by lazy { Routes(userRouter, usersRouter, profilesRouter, articlesRouter, tagsRouter) }
     internal val server: HttpServer by lazy { HttpServer(serverAdapter, router, serverSettings) }
 
     init {

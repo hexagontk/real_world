@@ -2,6 +2,7 @@ package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
@@ -16,8 +17,9 @@ internal data class UserRouter(
     private val users: UsersService,
     private val contentType: ContentType,
     private val authenticator: HttpHandler,
-) {
-    val userRouter = path {
+) : HttpController {
+
+    override val handler = path {
         use(authenticator)
 
         get {
