@@ -19,9 +19,9 @@ services:
     environment:
       bindAddress: 0.0.0.0
       mongodbUrl: mongodb://mongodb/real_world
-#    image: TODO
+    image: backend
     build:
-      dockerfile: backend/Dockerfile
+      dockerfile: backend/distribution.dockerfile
     ports:
       - "3090:2010"
 
