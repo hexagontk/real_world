@@ -80,7 +80,23 @@ This is still to be implemented by the CI/CD pipeline using GitHub Actions.
 * Add requests' bodies validation returning as many errors as wrong fields
 * Code stress tests using Gatling.io against local, container, or deployed service
 * Create native executable using GraalVM
+* Vue front end
 * Publish front end in GitHub pages
 * Migrate readme.md API documentation to Swagger
 * ArchUnit or Konsist tests
 * Cucumber or Kotest tests
+* Jlink
+* OpenJ9
+* Liberica NIK
+* Commit message
+* PR/MR template
+* Cucumber BDD (check transactions)
+* ArchUnit (preferred over modules: it allows naming checks, etc.)
+
+# Features
+* Kotlin
+* Testcontainers
+* Hexagonal Architecture
+* Docker compose
+* SDKMAN
+* Pre push script
