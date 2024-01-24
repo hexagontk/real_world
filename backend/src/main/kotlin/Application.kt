@@ -1,27 +1,24 @@
 package com.hexagonkt.realworld
 
-import com.hexagonkt.core.logging.LoggingManager
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.handlers.FilterHandler
 import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.server.*
 import com.hexagonkt.http.server.netty.NettyServerAdapter
-import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
 import com.hexagonkt.realworld.domain.UsersService
 import com.hexagonkt.realworld.rest.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.serialization.SerializationManager
-import com.hexagonkt.serialization.jackson.json.Json
 import com.hexagonkt.store.Store
+import kotlin.text.Charsets.UTF_8
 
 data class Application(
     private val settings: Settings = Settings(),
     private val jwt: Jwt,
     private val users: Store<User, String>,
     private val articles: Store<Article, String>,
-    private val contentType: ContentType = ContentType(APPLICATION_JSON, charset = Charsets.UTF_8)
+    private val contentType: ContentType = ContentType(APPLICATION_JSON, charset = UTF_8)
 ) {
     private val authenticator = FilterHandler("*") {
         val principal = jwt.parsePrincipal(this)
@@ -41,11 +38,6 @@ data class Application(
     private val tagsRouter = TagsRouter(articles, contentType)
     private val router: HttpHandler by lazy { Routes(userRouter, usersRouter, profilesRouter, articlesRouter, tagsRouter) }
     internal val server: HttpServer by lazy { HttpServer(serverAdapter, router, serverSettings) }
-
-    init {
-        LoggingManager.adapter = Slf4jJulLoggingAdapter()
-        SerializationManager.defaultFormat = Json
-    }
 
     fun start() {
         server.start()
