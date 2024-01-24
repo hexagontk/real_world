@@ -8,7 +8,7 @@ import kotlin.test.Test
 internal class ArchTest {
 
     companion object {
-        private val APPLICATION_PACKAGE: String = Application::class.java.`package`.name
+        private val APPLICATION_PACKAGE: String = Settings::class.java.`package`.name
         private val DOMAIN_PACKAGE: String = "$APPLICATION_PACKAGE.domain"
         private val DOMAIN_MODEL_PACKAGE: String = "$DOMAIN_PACKAGE.model"
         private val ADAPTER_PACKAGE: String = "$APPLICATION_PACKAGE.adapter"

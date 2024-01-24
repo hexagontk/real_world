@@ -11,7 +11,7 @@ import com.hexagonkt.realworld.rest.messages.ProfileResponseRoot
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.store.Store
 
-internal data class ProfilesRouter(
+internal data class ProfilesController(
     private val users: Store<User, String>,
     private val contentType: ContentType,
     private val authenticator: HttpHandler,

@@ -15,7 +15,7 @@ import com.hexagonkt.realworld.rest.messages.CommentResponse
 import com.hexagonkt.realworld.rest.messages.OkResponse
 import com.hexagonkt.store.Store
 
-internal data class CommentsRouter(
+internal data class CommentsController(
     private val jwt: Jwt,
     private val users: Store<User, String>,
     private val articles: Store<Article, String>,

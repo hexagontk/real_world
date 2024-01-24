@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.core.Jvm
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.main
 import com.hexagonkt.serialization.SerializationManager
 import com.hexagonkt.serialization.jackson.json.Json
@@ -36,6 +36,6 @@ internal open class ITBase {
     }
 
     @AfterAll fun shutdown() {
-        application.server.stop()
+        restApi.server.stop()
     }
 }

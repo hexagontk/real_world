@@ -7,7 +7,7 @@ import com.hexagonkt.realworld.rest.messages.TagsResponseRoot
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.store.Store
 
-internal data class TagsRouter(
+internal data class TagsController(
     private val articles: Store<Article, String>,
     private val contentType: ContentType,
 ) : HttpController {

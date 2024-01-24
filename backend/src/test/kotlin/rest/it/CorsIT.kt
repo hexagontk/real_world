@@ -8,7 +8,7 @@ import com.hexagonkt.http.client.jetty.JettyClientAdapter
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.Header
 import com.hexagonkt.http.model.Headers
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import kotlin.test.assertEquals
@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 internal class CorsIT : ITBase() {
 
     @Test fun `OPTIONS returns correct CORS headers`() {
-        val baseUrl = urlOf("http://localhost:${application.server.runtimePort}/api")
+        val baseUrl = urlOf("http://localhost:${restApi.server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = baseUrl, contentType = ContentType(APPLICATION_JSON))
         val client = HttpClient(JettyClientAdapter(), settings)
         client.start()

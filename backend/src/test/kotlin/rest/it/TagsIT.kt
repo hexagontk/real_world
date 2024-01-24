@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ internal class TagsIT : ITBase() {
     )
 
     @Test fun `Get all tags don't return duplicates`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)

@@ -3,7 +3,7 @@ package com.hexagonkt.realworld.rest.it
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.model.INTERNAL_SERVER_ERROR_500
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
  *   - Login with bad password
  */
 @DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
-internal class UsersRouterIT : ITBase() {
+internal class UsersControllerIT : ITBase() {
 
     private val jake = User(
         username = "jake",
@@ -29,7 +29,7 @@ internal class UsersRouterIT : ITBase() {
     )
 
     @Test fun `Delete, login and register users`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
 
         client.deleteUser(jake)
         client.deleteUser(jake, setOf(404))

@@ -1,14 +1,14 @@
 package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.domain.model.User
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import java.net.URI
 
 @DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
-internal class ProfilesRouterIT : ITBase() {
+internal class ProfilesControllerIT : ITBase() {
 
     private val jake = User(
         username = "jake",
@@ -27,7 +27,7 @@ internal class ProfilesRouterIT : ITBase() {
     )
 
     @Test fun `Follow and unfollow a profile`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)
 

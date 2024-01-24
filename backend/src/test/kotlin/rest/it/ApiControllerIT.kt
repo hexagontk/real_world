@@ -2,7 +2,7 @@ package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.http.model.NOT_FOUND_404
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.domain.model.User
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
  * TODO Test bad requests (invalid JSON, bad field formats, etc.)
  */
 @DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
-internal class RoutesIT : ITBase() {
+internal class ApiControllerIT : ITBase() {
 
     private val jake = User(
         username = "jake",
@@ -24,7 +24,7 @@ internal class RoutesIT : ITBase() {
     )
 
     @Test fun `Non existing route returns a 404`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.client.get("/404").apply { assertEquals(NOT_FOUND_404, status) }

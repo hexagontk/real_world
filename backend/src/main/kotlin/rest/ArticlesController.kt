@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
-internal data class ArticlesRouter(
+internal data class ArticlesController(
     private val jwt: Jwt,
     private val users: Store<User, String>,
     private val articles: Store<Article, String>,

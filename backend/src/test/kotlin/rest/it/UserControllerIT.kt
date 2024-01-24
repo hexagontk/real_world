@@ -5,7 +5,7 @@ import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.UNAUTHORIZED_401
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.rest.messages.PutUserRequest
 import com.hexagonkt.realworld.domain.model.User
@@ -16,7 +16,7 @@ import java.net.URI
 import kotlin.test.assertEquals
 
 @DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
-internal class UserRouterIT : ITBase() {
+internal class UserControllerIT : ITBase() {
 
     private val jake = User(
         username = "jake",
@@ -27,7 +27,7 @@ internal class UserRouterIT : ITBase() {
     )
 
     @Test fun `Get and update current user`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.getUser(jake)

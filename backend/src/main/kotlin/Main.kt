@@ -6,6 +6,7 @@ import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.Comment
 import com.hexagonkt.realworld.domain.model.User
+import com.hexagonkt.realworld.rest.RestApi
 import com.hexagonkt.serialization.SerializationManager
 import com.hexagonkt.serialization.jackson.json.Json
 import com.hexagonkt.store.Store
@@ -14,20 +15,20 @@ import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
 import java.net.URI
 
-val application by lazy {
+val restApi by lazy {
     val settings = Settings()
     val jwt = createJwt(settings)
     val userStore = createUserStore(settings)
     val articleStore = createArticleStore(settings)
 
-    Application(settings, jwt, userStore, articleStore)
+    RestApi(settings, jwt, userStore, articleStore)
 }
 
 internal fun main() {
     LoggingManager.adapter = Slf4jJulLoggingAdapter()
     SerializationManager.defaultFormat = Json
 
-    application.start()
+    restApi.start()
 }
 
 internal fun createJwt(settings: Settings): Jwt =

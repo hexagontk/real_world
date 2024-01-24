@@ -12,7 +12,7 @@ import com.hexagonkt.realworld.Jwt
 import com.hexagonkt.realworld.domain.UsersService
 import com.hexagonkt.rest.bodyMap
 
-internal data class UserRouter(
+internal data class UserController(
     private val jwt: Jwt,
     private val users: UsersService,
     private val contentType: ContentType,

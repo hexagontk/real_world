@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.rest.messages.CommentRequest
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
@@ -30,7 +30,7 @@ internal class CommentsIT : ITBase() {
     )
 
     @Test fun `Delete, create and get article's comments`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -42,7 +42,7 @@ internal class CommentsIT : ITBase() {
     }
 
     @Test fun `Get article's comments without login`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -55,7 +55,7 @@ internal class CommentsIT : ITBase() {
     }
 
     @Test fun `Post comment to a not created article`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.createComment("non_existing_article", CommentRequest("Nice film"))

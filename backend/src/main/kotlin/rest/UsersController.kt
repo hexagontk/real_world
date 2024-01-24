@@ -11,7 +11,7 @@ import com.hexagonkt.realworld.rest.messages.*
 import com.hexagonkt.rest.bodyMap
 import com.hexagonkt.store.Store
 
-internal data class UsersRouter(
+internal data class UsersController(
     private val jwt: Jwt,
     private val users: Store<User, String>,
     private val contentType: ContentType,

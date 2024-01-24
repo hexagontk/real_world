@@ -16,7 +16,7 @@ import com.hexagonkt.realworld.rest.messages.ErrorResponseRoot
 import com.hexagonkt.rest.SerializeResponseCallback
 import kotlin.text.Charsets.UTF_8
 
-internal data class Routes(
+internal data class ApiController(
     private val userRouter: HttpHandler,
     private val usersRouter: HttpHandler,
     private val profilesRouter: HttpHandler,

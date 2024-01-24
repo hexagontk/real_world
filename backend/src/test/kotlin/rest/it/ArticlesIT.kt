@@ -1,7 +1,7 @@
 package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.rest.messages.PutArticleRequest
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
@@ -48,7 +48,7 @@ internal class ArticlesIT : ITBase() {
     )
 
     @Test fun `Delete, create update and get an article`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -59,7 +59,7 @@ internal class ArticlesIT : ITBase() {
     }
 
     @Test fun `Favorite and un-favorite articles`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val user = jake.username
 
         val jakeClient = client.initializeUser(jake)
@@ -86,7 +86,7 @@ internal class ArticlesIT : ITBase() {
     }
 
     @Test fun `Find articles filters correctly`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)
 
@@ -121,7 +121,7 @@ internal class ArticlesIT : ITBase() {
     }
 
     @Test fun `Get user feed`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)
 
