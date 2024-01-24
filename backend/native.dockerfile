@@ -3,11 +3,12 @@
 #
 FROM docker.io/bellsoft/liberica-native-image-kit-container:jdk-17-nik-22-musl as build
 USER root
+ENV DOCKER_BUILD=true
 WORKDIR /build
 
 ADD . .
 RUN microdnf -y install findutils
-RUN ./gradlew -x test nativeCompile
+RUN ./gradlew nativeCompile
 
 #
 # RUNTIME

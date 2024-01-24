@@ -9,30 +9,14 @@ import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.http.model.Header
 import com.hexagonkt.http.model.Headers
 import com.hexagonkt.realworld.application
-import com.hexagonkt.realworld.main
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import kotlin.test.assertEquals
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class CorsIT {
+@DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
+internal class CorsIT : ITBase() {
 
-    @BeforeAll
-    fun startup() {
-        System.setProperty("mongodbUrl", mongodbUrl)
-
-        main()
-    }
-
-    @AfterAll
-    fun shutdown() {
-        application.server.stop()
-    }
-
-    @Test
-    fun `OPTIONS returns correct CORS headers`() {
+    @Test fun `OPTIONS returns correct CORS headers`() {
         val baseUrl = urlOf("http://localhost:${application.server.runtimePort}/api")
         val settings = HttpClientSettings(baseUrl = baseUrl, contentType = ContentType(APPLICATION_JSON))
         val client = HttpClient(JettyClientAdapter(), settings)

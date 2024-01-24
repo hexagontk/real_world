@@ -2,22 +2,16 @@ package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
-import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.rest.messages.PutArticleRequest
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.serialization.SerializationManager
-import com.hexagonkt.serialization.jackson.json.Json
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import java.net.URI
 
 // TODO Add test to check articles' tags order
-@TestInstance(PER_CLASS)
-class ArticlesIT {
+@DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
+internal class ArticlesIT : ITBase() {
 
     private val jake = User(
         username = "jake",
@@ -52,17 +46,6 @@ class ArticlesIT {
         tagList = linkedSetOf("dragons", "books"),
         author = jake.username
     )
-
-    @BeforeAll fun startup() {
-        SerializationManager.formats = setOf(Json)
-        System.setProperty("mongodbUrl", mongodbUrl)
-
-        main()
-    }
-
-    @AfterAll fun shutdown() {
-        application.server.stop()
-    }
 
     @Test fun `Delete, create update and get an article`() {
         val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")

@@ -2,19 +2,13 @@ package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
-import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.serialization.SerializationManager
-import com.hexagonkt.serialization.jackson.json.Json
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import java.net.URI
 
-@TestInstance(PER_CLASS)
-class ProfilesRouterIT {
+@DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
+internal class ProfilesRouterIT : ITBase() {
 
     private val jake = User(
         username = "jake",
@@ -31,17 +25,6 @@ class ProfilesRouterIT {
         bio = "I own MegaCloud",
         image = URI("https://i.pravatar.cc/150?img=1")
     )
-
-    @BeforeAll fun startup() {
-        SerializationManager.formats = setOf(Json)
-        System.setProperty("mongodbUrl", mongodbUrl)
-
-        main()
-    }
-
-    @AfterAll fun shutdown() {
-        application.server.stop()
-    }
 
     @Test fun `Follow and unfollow a profile`() {
         val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")

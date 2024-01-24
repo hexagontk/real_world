@@ -2,21 +2,15 @@ package com.hexagonkt.realworld.rest.it
 
 import com.hexagonkt.realworld.RealWorldClient
 import com.hexagonkt.realworld.application
-import com.hexagonkt.realworld.main
 import com.hexagonkt.realworld.rest.messages.CommentRequest
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.serialization.SerializationManager
-import com.hexagonkt.serialization.jackson.json.Json
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import java.net.URI
 
-@TestInstance(PER_CLASS)
-class CommentsIT {
+@DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
+internal class CommentsIT : ITBase() {
 
     private val jake = User(
         username = "jake",
@@ -34,17 +28,6 @@ class CommentsIT {
         tagList = linkedSetOf("dragons", "training"),
         author = jake.username
     )
-
-    @BeforeAll fun startup() {
-        SerializationManager.formats = setOf(Json)
-        System.setProperty("mongodbUrl", mongodbUrl)
-
-        main()
-    }
-
-    @AfterAll fun shutdown() {
-        application.server.stop()
-    }
 
     @Test fun `Delete, create and get article's comments`() {
         val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
