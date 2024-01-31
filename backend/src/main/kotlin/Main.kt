@@ -1,8 +1,6 @@
 package com.hexagonkt.realworld
 
 import com.hexagonkt.core.*
-import com.hexagonkt.core.logging.LoggingManager
-import com.hexagonkt.logging.slf4j.jul.Slf4jJulLoggingAdapter
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.Comment
 import com.hexagonkt.realworld.domain.model.User
@@ -25,7 +23,6 @@ val restApi by lazy {
 }
 
 internal fun main() {
-    LoggingManager.adapter = Slf4jJulLoggingAdapter()
     SerializationManager.defaultFormat = Json
 
     restApi.start()
