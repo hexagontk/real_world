@@ -3,7 +3,7 @@ import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 plugins {
     kotlin("jvm") version("1.9.22") apply(false)
 
-    id("org.graalvm.buildtools.native") version("0.10.0") apply(false)
+    id("org.graalvm.buildtools.native") version("0.10.1") apply(false)
 }
 
 defaultTasks("build")

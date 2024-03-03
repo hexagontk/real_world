@@ -8,17 +8,17 @@ import com.hexagonkt.realworld.rest.messages.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
-import com.hexagonkt.rest.tools.Http
+import com.hexagonkt.rest.tools.StateHttpClient
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 
-internal class RealWorldClient(val client: Http) {
+internal class RealWorldClient(val client: StateHttpClient) {
 
     companion object {
         val json = ContentType(APPLICATION_JSON)
     }
 
-    constructor(endpoint: String) : this(Http(JettyClientAdapter(), endpoint, json))
+    constructor(endpoint: String) : this(StateHttpClient(JettyClientAdapter(), endpoint, json))
 
     init {
         client.start()
@@ -60,7 +60,7 @@ internal class RealWorldClient(val client: Http) {
         }
 
         return RealWorldClient(
-            Http(
+            StateHttpClient(
                 client.adapter,
                 client.url,
                 json,
