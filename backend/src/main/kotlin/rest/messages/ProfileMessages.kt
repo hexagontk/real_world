@@ -8,7 +8,7 @@ data class ProfileResponse(
     val image: String,
     val following: Boolean
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.requirePath("profile", ProfileResponse::username),
         data.requirePath("profile", ProfileResponse::bio),
         data.requirePath("profile", ProfileResponse::image),

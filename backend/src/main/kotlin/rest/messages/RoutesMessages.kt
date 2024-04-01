@@ -20,7 +20,7 @@ data class UserResponse(
     val image: String,
     val token: String
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.requireString(UserResponse::email),
         data.requireString(UserResponse::username),
         data.requireString(UserResponse::bio),

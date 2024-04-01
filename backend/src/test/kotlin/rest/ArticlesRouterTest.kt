@@ -1,21 +1,21 @@
 package com.hexagonkt.realworld.rest
 
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.realworld.Settings
 import com.hexagonkt.realworld.createJwt
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.store.Store
 import io.mockk.mockk
+import java.net.URI
 
-class ArticlesRouterTest {
+internal class ArticlesRouterTest {
 
     private val jake = User(
         username = "jake",
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     private val jane = User(
@@ -23,7 +23,7 @@ class ArticlesRouterTest {
         email = "jane@jane.jane",
         password = "janejane",
         bio = "I own MegaCloud",
-        image = urlOf("https://i.pravatar.cc/150?img=1")
+        image = URI("https://i.pravatar.cc/150?img=1")
     )
 
     private val trainDragon = Article(
@@ -44,8 +44,9 @@ class ArticlesRouterTest {
 //    @Test fun `Favorite not found article returns 404`() {
 //        every { articleStore.findOne("sample") } returns null
 //
-//        val request = TestRequest(pathParameters = mapOf("slug" to "sample"))
-//        val call = testCall(request = request)
+//        val request = HttpRequest(GET, path = "sample")
+//
+//        val call = ArticlesRouter().articlesRouter.process(request)
 //        call.attributes["principal"] = principal
 //
 //        try {

@@ -5,8 +5,7 @@ import com.hexagonkt.realworld.domain.model.Comment
 import com.hexagonkt.realworld.domain.model.User
 
 data class CommentRequest(val body: String) {
-
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.requirePath<String>(CommentRequest::body),
     )
 }
@@ -18,7 +17,7 @@ data class CommentResponse(
     val body: String,
     val author: AuthorResponse
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.requirePath(CommentResponse::id),
         data.requirePath(CommentResponse::createdAt),
         data.requirePath(CommentResponse::updatedAt),

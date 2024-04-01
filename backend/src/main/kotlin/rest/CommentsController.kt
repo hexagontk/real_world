@@ -2,6 +2,7 @@ package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.require
 import com.hexagonkt.core.requirePath
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
 import com.hexagonkt.realworld.*
@@ -14,13 +15,14 @@ import com.hexagonkt.realworld.rest.messages.CommentResponse
 import com.hexagonkt.realworld.rest.messages.OkResponse
 import com.hexagonkt.store.Store
 
-internal data class CommentsRouter(
+internal data class CommentsController(
     private val jwt: Jwt,
     private val users: Store<User, String>,
     private val articles: Store<Article, String>,
     private val contentType: ContentType,
-) {
-    val commentsRouter = path {
+) : HttpController {
+
+    override val handler = path {
         post {
             val subject = jwt.parsePrincipal(this) ?: return@post unauthorized("Unauthorized")
             val slug = pathParameters.require(Article::slug.name)

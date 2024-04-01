@@ -4,22 +4,28 @@ import com.hexagonkt.core.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.Comment
 import com.hexagonkt.realworld.domain.model.User
+import com.hexagonkt.realworld.rest.RestApi
+import com.hexagonkt.serialization.SerializationManager
+import com.hexagonkt.serialization.jackson.json.Json
 import com.hexagonkt.store.Store
 import com.hexagonkt.store.mongodb.MongoDbStore
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.Indexes
+import java.net.URI
 
-val application by lazy {
+val restApi by lazy {
     val settings = Settings()
     val jwt = createJwt(settings)
     val userStore = createUserStore(settings)
     val articleStore = createArticleStore(settings)
 
-    Application(settings, jwt, userStore, articleStore)
+    RestApi(settings, jwt, userStore, articleStore)
 }
 
 internal fun main() {
-    application.start()
+    SerializationManager.defaultFormat = Json
+
+    restApi.start()
 }
 
 internal fun createJwt(settings: Settings): Jwt =
@@ -46,7 +52,7 @@ private fun createUserStore(settings: Settings): Store<User, String> {
                 email = it.requireString(User::email),
                 password = it.requireString(User::password),
                 bio = it.getString(User::bio),
-                image = it.getString(User::image)?.let(::urlOf),
+                image = it.getString(User::image)?.let(::URI),
                 following = it.getStringsOrEmpty(User::following).toSet(),
             )
         },

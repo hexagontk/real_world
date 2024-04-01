@@ -4,6 +4,7 @@ import com.hexagonkt.core.MultipleException
 import com.hexagonkt.core.fail
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
@@ -12,23 +13,25 @@ import com.hexagonkt.http.server.callbacks.CorsCallback
 import com.hexagonkt.http.server.callbacks.LoggingCallback
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.rest.messages.ErrorResponseRoot
+import com.hexagonkt.rest.SerializeResponseCallback
 import kotlin.text.Charsets.UTF_8
 
-internal data class Routes(
+internal data class ApiController(
     private val userRouter: HttpHandler,
     private val usersRouter: HttpHandler,
     private val profilesRouter: HttpHandler,
     private val articlesRouter: HttpHandler,
     private val tagsRouter: HttpHandler,
-) {
+) : HttpController {
+
     val contentType: ContentType = ContentType(APPLICATION_JSON, charset = UTF_8)
     val allowedHeaders: Set<String> = setOf("accept", "user-agent", "host", "content-type")
 
-    internal val router by lazy {
+    override val handler by lazy {
         path {
             filter("*", callback = LoggingCallback(includeBody = false, includeHeaders = false))
             filter("*", callback = CorsCallback(allowedHeaders = allowedHeaders))
-            after("*", callback = ResponseSerializationCallback())
+            after("*", callback = SerializeResponseCallback())
 
             exception<Exception> { exceptionHandler(exception ?: fail) }
             exception<MultipleException> { multipleExceptionHandler(exception ?: fail) }

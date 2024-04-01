@@ -8,6 +8,10 @@
 ### [Demo](https://github.com/gothinkster/realworld)
 TODO Set working demo URL
 
+TODO Document setup: refer to `.git/hooks/pre-push.sample` for information about this hook script.
+
+TODO Document clean up To clean Docker artifacts execute: `sudo docker system prune -af`
+
 ### [RealWorld]
 This codebase was created to demonstrate a fully fledged fullstack application built with
 **Hexagon** including CRUD operations, authentication, routing, pagination, and more.
@@ -76,7 +80,23 @@ This is still to be implemented by the CI/CD pipeline using GitHub Actions.
 * Add requests' bodies validation returning as many errors as wrong fields
 * Code stress tests using Gatling.io against local, container, or deployed service
 * Create native executable using GraalVM
+* Vue front end
 * Publish front end in GitHub pages
 * Migrate readme.md API documentation to Swagger
 * ArchUnit or Konsist tests
 * Cucumber or Kotest tests
+* Jlink
+* OpenJ9
+* Liberica NIK
+* Commit message
+* PR/MR template
+* Cucumber BDD (check transactions)
+* ArchUnit (preferred over modules: it allows naming checks, etc.)
+
+# Features
+* Kotlin
+* Testcontainers
+* Hexagonal Architecture
+* Docker compose
+* SDKMAN
+* Pre push script

@@ -2,6 +2,7 @@ package com.hexagonkt.realworld.rest
 
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
@@ -11,13 +12,14 @@ import com.hexagonkt.realworld.Jwt
 import com.hexagonkt.realworld.domain.UsersService
 import com.hexagonkt.rest.bodyMap
 
-internal data class UserRouter(
+internal data class UserController(
     private val jwt: Jwt,
     private val users: UsersService,
     private val contentType: ContentType,
     private val authenticator: HttpHandler,
-) {
-    val userRouter = path {
+) : HttpController {
+
+    override val handler = path {
         use(authenticator)
 
         get {
@@ -27,7 +29,7 @@ internal data class UserRouter(
 
         put {
             val subject = jwt.parsePrincipal(this) ?: return@put unauthorized("Unauthorized")
-            val body = PutUserRequest(request.bodyMap().requirePath<Map<*, *>>("user"))
+            val body = PutUserRequest(request.bodyMap().requirePath<Map<String, *>>("user"))
             val updates = body.toFieldsMap()
 
             val updated = users.replaceUser(subject, updates)

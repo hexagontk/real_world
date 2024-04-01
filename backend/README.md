@@ -34,10 +34,10 @@ The service has three layers:
   1. Gets data and parameters
   2. Authorize
   3. Authenticate
-  2. Validate data and state
-  3. Convert to services model
-  4. Uses services for validation and execution
-  5. Take resulting models and convert them to output messages
+  4. Validate data and state
+  5. Convert to services model
+  6. Uses services for validation and execution
+  7. Take resulting models and convert them to output messages
 * Services: application logic and data (independent of the others)
   - Called by routes
   - Calls stores (the dependency will be by interfaces)
@@ -48,7 +48,7 @@ Rules of thumb:
 - "All you know binds you" the less each component knows about others, the better.
 - Each layer is in a package
 - A layer package can have subpackages
-- Services can not import anything outside services (with the exception of logging)
+- Services can not import anything outside services (except logging)
 - Other packages can only import from services not among them
 
 ## RealWorld API Spec
@@ -58,7 +58,7 @@ Rules of thumb:
 
 ## JWT
 
-JWT token generation/parsing requires a RSA key pair. To generate a keypair keystore execute:
+JWT token generation/parsing requires an RSA key pair. To generate a keypair keystore execute:
 
 ```bash
 keytool \
@@ -241,7 +241,7 @@ If a request fails any validations, expect a 422 and errors in the following for
 
 #### Other status codes:
 
-401 for Unauthorized requests, when a request requires authentication but it isn't provided
+401 for Unauthorized requests, when a request requires authentication, but it isn't provided
 
 403 for Forbidden requests, when a request may be valid but the user doesn't have permissions to perform the action
 

@@ -4,6 +4,7 @@ import com.hexagonkt.core.require
 import com.hexagonkt.core.requirePath
 import com.hexagonkt.core.withZone
 import com.hexagonkt.http.handlers.HttpContext
+import com.hexagonkt.http.handlers.HttpController
 import com.hexagonkt.http.handlers.HttpHandler
 import com.hexagonkt.http.handlers.path
 import com.hexagonkt.http.model.ContentType
@@ -17,15 +18,16 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME
 
-internal data class ArticlesRouter(
+internal data class ArticlesController(
     private val jwt: Jwt,
     private val users: Store<User, String>,
     private val articles: Store<Article, String>,
     private val contentType: ContentType,
     private val authenticator: HttpHandler,
     private val commentsRouter: HttpHandler,
-) {
-    val articlesRouter by lazy {
+) : HttpController {
+
+    override val handler by lazy {
         path {
             get("/feed") { getFeed() }
 

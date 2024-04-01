@@ -1,29 +1,23 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
-import com.hexagonkt.realworld.main
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.rest.messages.CommentRequest
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.serialization.SerializationManager
-import com.hexagonkt.serialization.jackson.json.Json
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
+import java.net.URI
 
-@TestInstance(PER_CLASS)
-class CommentsIT {
+@DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
+internal class CommentsIT : ITBase() {
 
     private val jake = User(
         username = "jake",
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     private val trainDragon = Article(
@@ -35,19 +29,8 @@ class CommentsIT {
         author = jake.username
     )
 
-    @BeforeAll fun startup() {
-        SerializationManager.formats = setOf(Json)
-        System.setProperty("mongodbUrl", mongodbUrl)
-
-        main()
-    }
-
-    @AfterAll fun shutdown() {
-        application.server.stop()
-    }
-
     @Test fun `Delete, create and get article's comments`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -59,7 +42,7 @@ class CommentsIT {
     }
 
     @Test fun `Get article's comments without login`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -72,7 +55,7 @@ class CommentsIT {
     }
 
     @Test fun `Post comment to a not created article`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.createComment("non_existing_article", CommentRequest("Nice film"))

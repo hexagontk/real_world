@@ -1,30 +1,24 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
-import com.hexagonkt.realworld.main
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.rest.messages.PutArticleRequest
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.serialization.SerializationManager
-import com.hexagonkt.serialization.jackson.json.Json
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
+import java.net.URI
 
 // TODO Add test to check articles' tags order
-@TestInstance(PER_CLASS)
-class ArticlesIT {
+@DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
+internal class ArticlesIT : ITBase() {
 
     private val jake = User(
         username = "jake",
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
     private val jane = User(
@@ -32,7 +26,7 @@ class ArticlesIT {
         email = "jane@jane.jane",
         password = "janejane",
         bio = "I own MegaCloud",
-        image = urlOf("https://i.pravatar.cc/150?img=1")
+        image = URI("https://i.pravatar.cc/150?img=1")
     )
 
     private val trainDragon = Article(
@@ -53,19 +47,8 @@ class ArticlesIT {
         author = jake.username
     )
 
-    @BeforeAll fun startup() {
-        SerializationManager.formats = setOf(Json)
-        System.setProperty("mongodbUrl", mongodbUrl)
-
-        main()
-    }
-
-    @AfterAll fun shutdown() {
-        application.server.stop()
-    }
-
     @Test fun `Delete, create update and get an article`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
 
         jakeClient.deleteArticle(trainDragon.slug)
@@ -76,7 +59,7 @@ class ArticlesIT {
     }
 
     @Test fun `Favorite and un-favorite articles`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val user = jake.username
 
         val jakeClient = client.initializeUser(jake)
@@ -103,7 +86,7 @@ class ArticlesIT {
     }
 
     @Test fun `Find articles filters correctly`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)
 
@@ -138,7 +121,7 @@ class ArticlesIT {
     }
 
     @Test fun `Get user feed`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
         val jakeClient = client.initializeUser(jake)
         val janeClient = client.initializeUser(jane)
 

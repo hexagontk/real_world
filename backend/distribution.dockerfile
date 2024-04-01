@@ -3,11 +3,12 @@
 #
 FROM container-registry.oracle.com/graalvm/native-image:21-muslib-ol9 as build
 USER root
+ENV DOCKER_BUILD=true
 WORKDIR /build
 
 ADD . .
 RUN microdnf -y install findutils
-RUN ./gradlew -x test installDist
+RUN ./gradlew installDist
 
 #
 # RUNTIME

@@ -9,7 +9,7 @@ data class PutUserRequest(
     val bio: String? = null,
     val image: String? = null
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.getString(PutUserRequest::email),
         data.getString(PutUserRequest::password),
         data.getString(PutUserRequest::bio),

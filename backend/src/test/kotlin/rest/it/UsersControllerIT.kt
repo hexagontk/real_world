@@ -1,22 +1,15 @@
 package com.hexagonkt.realworld.rest.it
 
-import com.hexagonkt.core.Jvm
 import com.hexagonkt.core.requirePath
-import com.hexagonkt.core.urlOf
 import com.hexagonkt.http.model.INTERNAL_SERVER_ERROR_500
 import com.hexagonkt.realworld.RealWorldClient
-import com.hexagonkt.realworld.application
-import com.hexagonkt.realworld.main
+import com.hexagonkt.realworld.restApi
 import com.hexagonkt.realworld.rest.messages.ErrorResponse
 import com.hexagonkt.realworld.domain.model.User
 import com.hexagonkt.rest.bodyMap
-import com.hexagonkt.serialization.SerializationManager
-import com.hexagonkt.serialization.jackson.json.Json
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
+import java.net.URI
 import kotlin.test.assertEquals
 
 /**
@@ -24,34 +17,19 @@ import kotlin.test.assertEquals
  *   - Login without credentials
  *   - Login with bad password
  */
-@TestInstance(PER_CLASS)
-class UsersRouterIT {
-
-    private val port = Jvm.systemSettingOrNull<Int>("realWorldPort")
+@DisabledIfEnvironmentVariable(named = "DOCKER_BUILD", matches = "true")
+internal class UsersControllerIT : ITBase() {
 
     private val jake = User(
         username = "jake",
         email = "jake@jake.jake",
         password = "jakejake",
         bio = "I work at statefarm",
-        image = urlOf("https://i.pravatar.cc/150?img=3")
+        image = URI("https://i.pravatar.cc/150?img=3")
     )
 
-    @BeforeAll fun startup() {
-        SerializationManager.formats = setOf(Json)
-        if (port != null)
-            return
-
-        System.setProperty("mongodbUrl", mongodbUrl)
-        main()
-    }
-
-    @AfterAll fun shutdown() {
-        application.server.stop()
-    }
-
     @Test fun `Delete, login and register users`() {
-        val client = RealWorldClient("http://localhost:${application.server.runtimePort}/api")
+        val client = RealWorldClient("http://localhost:${restApi.server.runtimePort}/api")
 
         client.deleteUser(jake)
         client.deleteUser(jake, setOf(404))

@@ -2,29 +2,23 @@ package com.hexagonkt.realworld
 
 import com.hexagonkt.core.media.APPLICATION_JSON
 import com.hexagonkt.core.requirePath
-import com.hexagonkt.core.urlOf
-import com.hexagonkt.http.client.HttpClient
-import com.hexagonkt.http.client.HttpClientSettings
 import com.hexagonkt.http.client.jetty.JettyClientAdapter
-import com.hexagonkt.http.handlers.BeforeHandler
 import com.hexagonkt.http.model.*
 import com.hexagonkt.realworld.rest.messages.*
 import com.hexagonkt.realworld.domain.model.Article
 import com.hexagonkt.realworld.domain.model.User
-import com.hexagonkt.rest.SerializeRequestCallback
 import com.hexagonkt.rest.bodyMap
+import com.hexagonkt.rest.tools.StateHttpClient
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 
-internal class RealWorldClient(val client: HttpClient) {
+internal class RealWorldClient(val client: StateHttpClient) {
 
-    constructor(endpoint: String) : this(
-        HttpClient(
-            JettyClientAdapter(),
-            HttpClientSettings(urlOf(endpoint), ContentType(APPLICATION_JSON)),
-            BeforeHandler("*", SerializeRequestCallback())
-        )
-    )
+    companion object {
+        val json = ContentType(APPLICATION_JSON)
+    }
+
+    constructor(endpoint: String) : this(StateHttpClient(JettyClientAdapter(), endpoint, json))
 
     init {
         client.start()
@@ -33,7 +27,7 @@ internal class RealWorldClient(val client: HttpClient) {
     fun deleteUser(user: User, allowedCodes: Set<Int> = setOf(200, 404)) {
         client.delete("/users/${user.username}").apply {
             assert(status.code in allowedCodes) { "${status.code} not in $allowedCodes" }
-            assertEquals(contentType, contentType)
+            assertEquals(client.contentType, contentType)
         }
     }
 
@@ -65,17 +59,14 @@ internal class RealWorldClient(val client: HttpClient) {
             userResponse.token
         }
 
-        val settings = HttpClientSettings(
-            client.settings.baseUrl,
-            client.settings.contentType,
-            authorization = Authorization("token", header),
+        return RealWorldClient(
+            StateHttpClient(
+                client.adapter,
+                client.url,
+                json,
+                authorization = Authorization("token", header)
+            )
         )
-        val userClient = HttpClient(
-            JettyClientAdapter(),
-            settings,
-            BeforeHandler("*", SerializeRequestCallback())
-        )
-        return RealWorldClient(userClient)
     }
 
     fun initializeUser(user: User): RealWorldClient {
@@ -199,7 +190,7 @@ internal class RealWorldClient(val client: HttpClient) {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
-            val feedArticles = bodyMap().requirePath<List<Map<*, *>>>("articles").map { ArticleResponse(it) }
+            val feedArticles = bodyMap().requirePath<List<Map<String, *>>>("articles").map { ArticleResponse(it) }
             val feedResponse = ArticlesResponseRoot(feedArticles, articles.size.toLong())
             assert(feedResponse.articlesCount >= feedResponse.articles.size)
             assertEquals(articles.size, feedResponse.articles.size)
@@ -265,7 +256,7 @@ internal class RealWorldClient(val client: HttpClient) {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
-            val commentsResponse = bodyMap().requirePath<List<Map<*, *>>>("comments").map { CommentResponse(it) }
+            val commentsResponse = bodyMap().requirePath<List<Map<String, *>>>("comments").map { CommentResponse(it) }
             assertEquals(ids.size, commentsResponse.size)
             assert(commentsResponse.map { it.id }.containsAll(ids.toSet()))
         }
@@ -296,7 +287,7 @@ internal class RealWorldClient(val client: HttpClient) {
             assertEquals(OK_200, status)
             assertEquals(contentType, contentType)
 
-            val articles = bodyMap().requirePath<List<Map<*, *>>>("articles").map { ArticleResponse(it) }
+            val articles = bodyMap().requirePath<List<Map<String, *>>>("articles").map { ArticleResponse(it) }
             val articlesRoot = ArticlesResponseRoot(articles, articles.size.toLong())
             assert(articlesRoot.articlesCount >= 0)
             return articles

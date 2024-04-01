@@ -7,7 +7,7 @@ data class RegistrationRequest(
     val username: String,
     val password: String
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.requirePath(RegistrationRequest::email),
         data.requirePath(RegistrationRequest::username),
         data.requirePath(RegistrationRequest::password),
@@ -18,7 +18,7 @@ data class LoginRequest(
     val email: String,
     val password: String
 ) {
-    constructor(data: Map<*, *>) : this(
+    constructor(data: Map<String, *>) : this(
         data.requirePath(LoginRequest::email),
         data.requirePath(LoginRequest::password),
     )
