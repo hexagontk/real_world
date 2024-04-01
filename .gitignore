@@ -3,6 +3,10 @@
 private_*
 local_*
 
+# dependencies
+/node_modules
+/dist
+
 # Binaries
 *.out
 
@@ -23,14 +27,22 @@ bin/
 .settings/
 .project
 .classpath
+.c9/
+*.launch
+*.sublime-workspace
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
 
 # Idea
 .idea/
 out/
 *.iml
-
-# VS Code
-.vscode/
 
 # Runtime
 log/
@@ -49,3 +61,8 @@ node_modules/
 # System Files
 .DS_Store
 Thumbs.db
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
