@@ -1,5 +1,5 @@
 
-version: "3.9"
+name: real_world
 
 services:
 
@@ -10,6 +10,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: real_world
     ports:
       - "3010:27017"
 
@@ -21,7 +22,8 @@ services:
       - mongodb
     environment:
       bindAddress: 0.0.0.0
-      mongodbUrl: mongodb://mongodb/real_world
+      # TODO This should be a secret
+      mongodbUrl: mongodb://root:password@mongodb/real_world?authSource=admin
     image: ${REGISTRY:-}backend
     build:
       dockerfile: backend/distribution.dockerfile
@@ -30,3 +32,4 @@ services:
 
 volumes:
   mongodb:
+    driver: local

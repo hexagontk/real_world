@@ -12,7 +12,5 @@ data class Settings(
     val keyStoreResource: String =
         systemSettingOrNull("keyStoreResource") ?: "classpath:keystore.p12",
     val mongodbUrl: String =
-        systemSettingOrNull<String>("mongodbUrl") ?: "mongodb://localhost:3010/real_world",
-    val mongodbUser: String = systemSettingOrNull<String>("mongodbUser") ?: "root",
-    val mongodbPassword: String = systemSettingOrNull<String>("mongodbPassword") ?: "password",
+        systemSettingOrNull("mongodbUrl") ?: "mongodb://localhost:3010/real_world",
 )
