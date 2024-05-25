@@ -1,7 +1,7 @@
 #
 # BUILD
 #
-FROM docker.io/bellsoft/liberica-native-image-kit-container:jdk-17-nik-22-musl as build
+FROM ghcr.io/graalvm/native-image-community:21-muslib as build
 USER root
 ENV DOCKER_BUILD=true
 WORKDIR /build
