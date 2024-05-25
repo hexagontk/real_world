@@ -100,3 +100,13 @@ This is still to be implemented by the CI/CD pipeline using GitHub Actions.
 * Docker compose
 * SDKMAN
 * Pre push script
+
+```bash
+REGISTRY="$(minikube ip):5000/" docker compose build backend
+REGISTRY="$(minikube ip):5000/" docker compose push backend
+```
+
+> Try to add this line to Docker's daemon.json file and restart the Docker Daemon:
+> (C:\ProgramData\Docker\config\daemon.json on windows, /etc/docker/daemon.json on linux)
+>
+> "insecure-registries":["192.168.49.2:5000"]

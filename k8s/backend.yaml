@@ -40,7 +40,7 @@ spec:
                 configMapKeyRef:
                   name: backend-configmap
                   key: mongodbUrl
-          image: backend
+          image: 192.168.49.2:5000/backend
           name: backend
           ports:
             - containerPort: 2010
@@ -48,3 +48,26 @@ spec:
               protocol: TCP
           resources: {}
       restartPolicy: Always
+
+#---
+#
+#apiVersion: v1
+#kind: Service
+#
+#metadata:
+#  annotations:
+#    app: realworld
+#    kompose.cmd: kompose convert -f docker-compose.yml -o k8s
+#    kompose.version: 1.31.0 (HEAD)
+#    type: backend
+#  labels:
+#    io.kompose.service: backend
+#  name: backend
+#
+#spec:
+#  ports:
+#    - name: "3090"
+#      port: 3090
+#      targetPort: 2010
+#  selector:
+#    io.kompose.service: backend

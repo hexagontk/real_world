@@ -7,6 +7,9 @@ services:
     image: docker.io/mongo:7-jammy
     volumes:
       - mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
     ports:
       - "3010:27017"
 
@@ -19,7 +22,7 @@ services:
     environment:
       bindAddress: 0.0.0.0
       mongodbUrl: mongodb://mongodb/real_world
-    image: backend
+    image: ${REGISTRY:-}backend
     build:
       dockerfile: backend/distribution.dockerfile
     ports:

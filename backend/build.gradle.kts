@@ -39,8 +39,10 @@ dependencies {
     "testImplementation"("com.tngtech.archunit:archunit-junit5:$archUnitVersion")
     "testImplementation"("com.hexagonkt:rest_tools:$hexagonVersion")
     "testImplementation"("com.hexagonkt:http_client_jetty:$hexagonVersion")
-    "testImplementation"("org.testcontainers:mongodb:$testcontainersVersion")
     "testImplementation"("io.mockk:mockk:$mockkVersion")
+    "testImplementation"("org.testcontainers:mongodb:$testcontainersVersion") {
+        exclude(module = "commons-compress")
+    }
 }
 
 extensions.configure<GraalVMExtension> {
