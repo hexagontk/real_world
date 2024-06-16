@@ -2,7 +2,7 @@
 
 set -e
 
-docker compose up -d --build --force-recreate
+docker compose --profile local up -d --build --force-recreate
 
 ./gradlew build
 
