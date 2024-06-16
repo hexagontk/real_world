@@ -15,6 +15,7 @@ services:
       - "3010:27017"
 
   backend:
+    profiles: [ local ]
     labels:
       app: realworld
       type: backend
