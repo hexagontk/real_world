@@ -23,7 +23,7 @@ val restApi by lazy {
 }
 
 internal fun main() {
-    SerializationManager.defaultFormat = Json
+    SerializationManager.formats = setOf(Json)
 
     restApi.start()
 }

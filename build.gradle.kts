@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 
 plugins {
-    kotlin("jvm") version("2.0.0") apply(false)
+    kotlin("jvm") version("2.0.20") apply(false)
 
     id("org.graalvm.buildtools.native") version("0.10.2") apply(false)
 }
@@ -37,6 +37,6 @@ task("setUp") {
 }
 
 tasks.wrapper {
-    gradleVersion = "8.7"
+    gradleVersion = "8.10"
     distributionType = ALL
 }
